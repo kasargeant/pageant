@@ -1,9 +1,11 @@
 {
   "name": "pageant",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A pretty-printing console module extracted from Warhorse.",
   "keywords": [
-    "javascript", "console", "JSON"
+    "javascript",
+    "console",
+    "JSON"
   ],
   "author": "Kyle Alexis Sargeant",
   "email": "kasargeant@gmail.com",
