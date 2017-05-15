@@ -1,0 +1,13 @@
+# DEFAULT NPM IGNORE FILE
+
+# TYPICAL TOOLCHAIN
+.idea/
+
+# TEMPORARY FOLDERS AND FILES
+scratch/
+temp/
+
+# REPO FOLDERS NOT FOR NPM PUBLISHING
+/dist/
+/docs/
+/test/
