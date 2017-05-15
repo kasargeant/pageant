@@ -29,31 +29,12 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "test": "jest --verbose",
-    "test-update": "jest --updateSnapshot"
-  },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
-  "jest": {
-    "coverageDirectory": "./docs/coverage",
-    "setupTestFrameworkScriptFile": "./test/shared/MockStorage.js",
-    "testResultsProcessor": "./node_modules/jest-html-reporter"
-  },
-  "jest-html-reporter": {
-    "pageTitle": "Test Results",
-    "outputPath": "docs/tests/index.html",
-    "includeFailureMsg": false
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.24.1",
-    "babelify": "^7.3.0",
-    "jest-html-reporter": "^0.1.0",
     "minami": "^1.2.3"
   },
   "dependencies": {
-    "chalk": "^1.1.3"
+    "colors": "^1.1.2"
   }
 }
