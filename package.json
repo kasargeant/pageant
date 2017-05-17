@@ -29,12 +29,10 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "devDependencies": {
+    "jasmine": "^2.6.0",
     "minami": "^1.2.3"
-  },
-  "dependencies": {
-    "colors": "^1.1.2"
   }
 }
