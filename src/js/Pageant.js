@@ -12,8 +12,12 @@
  * @static
  */
 class Pageant {
-    constructor() {
-        this.isBrowser = false;
+    constructor(options) {
+        this.defaults = {
+            isBrowser: false
+        };
+        this.config = Object.assign(this.defaults, options);
+
         this.indentCount = 0;
 
         this.styles = {
@@ -54,34 +58,34 @@ class Pageant {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Warhorse specific
     cmd(value) {
-        isBrowser ? console.log(`%c${value}`, "background:magenta;") : console.log(this.magentaBg(value));
+        this.config.isBrowser ? console.log(`%c${value}`, "background:magenta;") : console.log(this.magentaBg(value));
     }
 
     task(value) {
         value = "  " + value;
-        isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
+        this.config.isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
     }
 
     action(value) {
         value = "  - " + value;
-        isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
+        this.config.isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
     }
     stage(value) {
         value = "    -> " + value;
-        isBrowser ? console.log(`%c${value}`, "color:cyan;") : console.log(this.cyan(value));
+        this.config.isBrowser ? console.log(`%c${value}`, "color:cyan;") : console.log(this.cyan(value));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Generic
     warning(value) {
-        isBrowser ? console.log(`%c${value}`, "color:orange;") : console.log(this.yellow(value));
+        this.config.isBrowser ? console.log(`%c${value}`, "color:orange;") : console.log(this.yellow(value));
     }
     error(value) {
-        isBrowser ? console.log(`%c${value}`, "color:red;") : console.log(this.red(value));
+        this.config.isBrowser ? console.log(`%c${value}`, "color:red;") : console.log(this.red(value));
     }
 
     info(value) {
-        isBrowser ? console.info(value) : console.log(this._stringifyValue(value));
+        this.config.isBrowser ? console.info(value) : console.log(this._stringifyValue(value));
     }
 
     stringify(value) {
