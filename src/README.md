@@ -2,21 +2,30 @@
 
 ## ABOUT
 
-colors.js and colour.js are popular string styling packages, but they extend String.prototype which can cause problems. 
+I needed color in my console!
 
-chalk.js is another that claims to be "done right.  But right or not, it's inflexible for all but simple string cases - and doesn't handle colorisation of other typical console output e.g. Objects and JSON.
- 
-I needed something not just light-weight and fast - but also cleanly implemented - and capable of colorising ALL console output - rather than just simple strings.
+Not just the odd colored string... but color for whatever code or data I wanted to output!
 
-Thus Pageant was created! ;)
+I looked at colors.js, colour.js, chalk.js, prettyjson, terminal-kit... just to name the more popular options.
+
+But I couldn't find any light-weight solution that JUST focused on the console.  Each library module was either too limited, too heavy-weight (functions and footprint) or just simply wasn't supported, never to be brought into a post ES2015 world!
+
+So, like any good coder, I decided to write the solution myself.
+
+I called it Pageant, in the medieval sense of a procession of dressed-up and colourful individuals and scenes passing by.  
+
+Which is sort of what... all console output is. 
+
+Anyway, I hope you find it as useful as I! ;)
+
 
 ## FEATURES
 
+* Implemented cleanly in ES2015.  No prototypes were harmed in this movie!
 * Console text can be dressed with: colors, background colors and styles.
 * Colored or styled text is easily composable.
-* Implemented cleanly in ES2015.  No prototypes were harmed in this movie!
-* Works out-the-box - colorizing without configuration.
 * Works the same in Node and in the browser.
+* Works out-the-box - colorizing without configuration.
 * Simple to use - 5 minutes to learn!
 
 
