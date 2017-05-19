@@ -14,9 +14,9 @@ So, like any good coder, I decided to write the solution myself.
 
 I called it Pageant, in the medieval sense of a procession of dressed-up and colourful individuals and scenes passing by.  
 
-Which is sort of what... all console output is. 
+Just like the data and code output passing by our eyes... in our console.
 
-Anyway, I hope you find it as useful as I! ;)
+Anyway, I hope you find it as useful as I!
 
 
 ## FEATURES

@@ -9,10 +9,13 @@
 /**
  * @class
  * @classdesc A class of colorising and pretty-print console functions for both node and browser.
- * @static
  */
 class Pageant {
-    constructor(options) {
+    /**
+     * @constructor
+     * @param {Object} options - An options object for setting configurational details.
+     */
+    constructor(options = {}) {
         this.defaults = {
             isBrowser: false
         };
@@ -53,6 +56,264 @@ class Pageant {
             white: "\x1b[47m"
         };
 
+        this.webColors = [
+            "black",
+            "maroon",
+            "green",
+            "olive",
+            "navy",
+            "purple",
+            "teal",
+            "silver",
+            "undef0",
+            "undef1",
+            "undef2",
+            "undef3",
+            "undef4",
+            "undef5",
+            "undef6",
+            "undef7",
+            "black1",
+            "navy1",
+            "darkblue",
+            "mediumblue",
+            "mediumblue1",
+            "blue",
+            "darkgreen",
+            "teal1",
+            "teal2",
+            "darkcyan",
+            "royalblue",
+            "dodgerblue",
+            "green1",
+            "teal3",
+            "darkcyan1",
+            "darkcyan2",
+            "darkturquoise",
+            "dodgerblue1",
+            "green2",
+            "darkcyan3",
+            "darkcyan4",
+            "lightseagreen",
+            "darkturquoise1",
+            "deepskyblue",
+            "lime",
+            "springgreen",
+            "springgreen1",
+            "darkturquoise2",
+            "darkturquoise3",
+            "deepskyblue1",
+            "lime1",
+            "springgreen2",
+            "springgreen3",
+            "mediumspringgreen",
+            "cyan",
+            "cyan1",
+            "maroon1",
+            "indigo",
+            "indigo1",
+            "indigo2",
+            "darkviolet",
+            "blue1",
+            "olive1",
+            "dimgray",
+            "dimgray1",
+            "slateblue",
+            "slateblue1",
+            "mediumslateblue",
+            "olive2",
+            "dimgray2",
+            "slategray",
+            "steelblue",
+            "cornflowerblue",
+            "cornflowerblue1",
+            "olive3",
+            "mediumseagreen",
+            "cadetblue",
+            "cadetblue1",
+            "cornflowerblue2",
+            "cornflowerblue3",
+            "lawngreen",
+            "mediumseagreen1",
+            "mediumaquamarine",
+            "mediumaquamarine1",
+            "mediumturquoise",
+            "lightskyblue",
+            "chartreuse",
+            "lightgreen",
+            "lightgreen1",
+            "mediumaquamarine2",
+            "aquamarine",
+            "aquamarine1",
+            "darkred",
+            "purple1",
+            "darkmagenta",
+            "darkmagenta1",
+            "darkviolet1",
+            "darkviolet2",
+            "olive4",
+            "dimgray3",
+            "gray",
+            "slateblue2",
+            "mediumpurple",
+            "mediumslateblue1",
+            "olive5",
+            "gray1",
+            "gray2",
+            "lightslategray",
+            "mediumpurple1",
+            "mediumslateblue2",
+            "olive6",
+            "darkseagreen",
+            "darkseagreen1",
+            "darkgray",
+            "skyblue",
+            "lightskyblue1",
+            "chartreuse1",
+            "yellowgreen",
+            "lightgreen2",
+            "mediumaquamarine3",
+            "skyblue1",
+            "lightskyblue2",
+            "chartreuse2",
+            "lightgreen3",
+            "lightgreen4",
+            "palegreen",
+            "aquamarine2",
+            "aquamarine3",
+            "darkred1",
+            "darkmagenta2",
+            "darkmagenta3",
+            "darkviolet3",
+            "darkviolet4",
+            "darkviolet5",
+            "darkgoldenrod",
+            "indianred",
+            "rosybrown",
+            "mediumorchid",
+            "mediumorchid1",
+            "mediumorchid2",
+            "darkgoldenrod1",
+            "peru",
+            "rosybrown1",
+            "darkgray1",
+            "mediumpurple2",
+            "violet",
+            "darkgoldenrod2",
+            "darkkhaki",
+            "tan",
+            "darkgray2",
+            "lightsteelblue",
+            "lightsteelblue1",
+            "gold",
+            "darkkhaki2",
+            "lightgreen5",
+            "silver1",
+            "lightblue",
+            "lightblue1",
+            "chartreuse3",
+            "greenyellow",
+            "palegreen1",
+            "palegreen2",
+            "paleturquoise",
+            "paleturquoise1",
+            "red",
+            "crimson",
+            "mediumvioletred",
+            "mediumvioletred1",
+            "darkviolet6",
+            "magenta",
+            "chocolate",
+            "indianred1",
+            "palevioletred",
+            "palevioletred1",
+            "orchid",
+            "orchid1",
+            "darkgoldenrod3",
+            "peru1",
+            "lightcoral",
+            "palevioletred2",
+            "orchid2",
+            "violet1",
+            "goldenrod",
+            "sandybrown",
+            "tan1",
+            "tan2",
+            "thistle",
+            "plum",
+            "gold1",
+            "darkkhaki1",
+            "burlywood",
+            "wheat",
+            "lightgray",
+            "lavender",
+            "yellow",
+            "greenyellow1",
+            "khaki",
+            "palegoldenrod",
+            "beige",
+            "lightcyan",
+            "red1",
+            "deeppink",
+            "deeppink1",
+            "deeppink2",
+            "magenta1",
+            "magenta2",
+            "orangered",
+            "tomato",
+            "hotpink",
+            "hotpink1",
+            "hotpink2",
+            "violet2",
+            "darkorange",
+            "coral",
+            "lightcoral1",
+            "hotpink3",
+            "violet3",
+            "violet4",
+            "orange",
+            "sandybrown1",
+            "lightsalmon",
+            "lightpink",
+            "lightpink1",
+            "lightpink2",
+            "gold2",
+            "sandybrown2",
+            "khaki1",
+            "navajowhite",
+            "mistyrose",
+            "lavenderblush",
+            "yellow1",
+            "khaki2",
+            "khaki3",
+            "moccasin",
+            "lightyellow",
+            "white",
+            "black2",
+            "black3",
+            "black4",
+            "darkslategray",
+            "darkslategray1",
+            "darkslategray2",
+            "darkslategray3",
+            "darkslategray4",
+            "dimgray4",
+            "dimgray5",
+            "dimgray6",
+            "gray3",
+            "gray4",
+            "gray5",
+            "lightslategray1",
+            "darkgray3",
+            "darkgray4",
+            "darkgray5",
+            "silver2",
+            "silver3",
+            "lightgray1",
+            "gainsboro",
+            "gainsboro1",
+            "honeydew"
+        ];
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,6 +498,54 @@ class Pageant {
      */
     whiteBg(text) {return `\x1b[47m${text}\x1b[0m`;}
 
+    rgb(text, r, g, b) {
+        let color = this.fg.rgb[36 * r + 6 * g + b];
+        return `${color}${text}\x1b[0m`;
+    }
+
+    webCode(text, ruleText=null) {
+        // Sanity check
+        if(ruleText === null) {return text;}
+
+        let rules = ruleText.split(";");
+
+        console.log("RULES" + rules);
+        console.log("RULES LENGTH" + rules.length);
+
+        let result = "";
+        for(let rule of rules) {
+// console.log("RULE" + rule);
+            let [style, value] = rule.split(":");
+console.log("style: " + style);
+console.log("value: " + value);
+            if(style !== undefined && value !== undefined) {
+                style = style.trim();
+                value = value.trim();
+                let z = (style === "background") ? 48 : 38;
+                let i = this.webColors.indexOf(value);
+                if(i === -1) {
+                    console.error("Error: Unrecognised style rule passed for web coloration.");
+                    return text;
+                }
+                result += `\x1b[${z};5;${i}m`;
+            }
+
+        }
+
+        return result += `${text}\x1b[0m`;
+    }
+
+    web(text, rule) {
+        let [style, value] = rule.split(":");
+        style.trim();
+        value.trim();
+        let i = this.webColors.indexOf(value);
+        if(i === -1) {
+            console.error("Error: Unrecognised style rule passed for web coloration.");
+            return text;
+        }
+        return `\x1b[38;5;${i}m${text}\x1b[0m`;
+    }
 
     /**
      * Marks the text string with multiple color and style characteristics.
@@ -280,7 +589,8 @@ class Pageant {
         this.indentCount++;
         if(values.length > 0) {
             values.map(function(value) {
-                representation += this.indent() + `${this._stringifyValue(value)},\n`;
+                representation += this.indent() + `${this._stringifyValue(value)},
+`;
             }.bind(this));
             representation = representation.slice(0, -2); // Remove the trailing comma+space
         }
@@ -300,7 +610,8 @@ class Pageant {
         keys.map(function(key) {
             let value = obj[key];
             // representation += this.indent() + `"${key.blue}": ${this._stringifyValue(value)},\n`;
-            representation += this.indent() + this.yellow(`"${key}"`) + `: ${this._stringifyValue(value)},\n`;
+            representation += this.indent() + this.yellow(`"${key}"`) + `: ${this._stringifyValue(value)},
+`;
         }.bind(this));
         representation = representation.slice(0, -2); // Remove the trailing comma+space
 
@@ -347,3 +658,14 @@ class Pageant {
 
 // Exports
 module.exports = Pageant;
+
+//
+// const color = new Pageant();
+//
+// // for(let i in color.webColors) {
+// //     let test = color.webCode(color.webColors[i], "background:black;color:"+color.webColors[i]);
+// //     console.log(test);
+// // }
+//
+// let test = color.webCode("hi there", "background: cyan; color:red;");
+// console.log(test);
