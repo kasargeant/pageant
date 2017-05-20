@@ -569,34 +569,212 @@ class Pageant {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Generic
+    // Console methods: enhanced
+
+    /**
+     * Logs ONLY IF the console's debug configuration has been set.
+     * Thus unlike the standard console.debug() which is merely an alias for console.log() - you can
+     * switch on or off debug logging in Pageant by setting the options.debug flag at instantiation.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     debug(value) {
         if(this.config.debug) {
             this.log(value);
         }
     }
+    /**
+     * Outputs a log message to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     log(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this._styleValue(value));
     }
+
+    /**
+     * Outputs a warning message to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     warning(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this.yellow(value));
     }
+
+    /**
+     * Outputs an error message to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     error(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:red;") : this.console.log(this.red(value));
     }
+    /**
+     * Outputs a exception message to the enhanced console (alias for console.error).
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
+    exception(value) {
+        this.error(value);
+    }
 
+    /**
+     * Outputs an expanded listing of the value to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     info(value) {
         this.config.isBrowser ? console.info(value) : this.console.log(this._stringifyValue(value));
     }
 
+    /**
+     * Outputs an object to the enhanced console - using standard formatting.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     stringify(value) {
         // this.console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
         this.console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
     }
 
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {Object|Array} data - The data to display.
+     * @returns {void}
+     */
+    table(data) {
+        this.console.table(data);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    trace() {
+        this.console.trace();
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Console methods: compatibility
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
+     */
+    assert(...args) {
+        this.console.assert(...args);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
+     */
+    clear() {
+        this.console.clear();
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be counted.
+     * @returns {void}
+     */
+    count(label) {
+        this.console.count(label);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
+     */
+    dir(...args) {
+        this.console.dir(...args);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
+     */
+    dirxml(...args) {
+        this.console.dirxml(...args);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @returns {void}
+     */
+    group() {
+        this.console.group();
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @returns {void}
+     */
+    groupCollapsed() {
+        this.console.groupCollapsed();
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @returns {void}
+     */
+    groupEnd() {
+        this.console.groupEnd();
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} name - A name to identify this profile.
+     * @returns {void}
+     */
+    profile(name) {
+        this.console.profile(name);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} name - A name to identify this profile.
+     * @returns {void}
+     */
+    profileEnd(name) {
+        this.console.profileEnd(name);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    time(label) {
+        this.console.time(label);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    timeEnd(label) {
+        this.console.timeEnd(label);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    timeStamp(label) {
+        this.console.timeStamp(label);
+    }
+
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // COLORATION
-
     /**
      * Marks the text string with a bright style.
      * @param {string} text - the text string to be colorized.
@@ -745,20 +923,15 @@ class Pageant {
      * @returns {string} - the colorized text string.
      */
     css(text, ruleText=null) {
+
         // Sanity check
         if(ruleText === null) {return text;}
 
         let rules = ruleText.split(";");
 
-        // this.console.log("RULES" + rules);
-        // this.console.log("RULES LENGTH" + rules.length);
-
         let result = "";
         for(let rule of rules) {
-// this.console.log("RULE" + rule);
             let [style, value] = rule.split(":");
-// this.console.log("style: " + style);
-// this.console.log("value: " + value);
             if(style !== undefined && value !== undefined) {
                 style = style.trim();
                 value = value.trim();
@@ -770,9 +943,7 @@ class Pageant {
                 }
                 result += `\x1b[3m\x1b[${z};5;${i}m`;
             }
-
         }
-
         return result += `${text}\x1b[0m`;
     }
 
@@ -1100,69 +1271,3 @@ class Pageant {
 
 // Exports
 module.exports = Pageant;
-
-// const color = new Pageant({
-//     scheme: 256,
-//     isBrowser: false
-// });
-//
-// color.demoAnsiColor();
-// color.demoWebColor();
-// color.demoTrueColor();
-
-//
-// const color = new Pageant({
-//     scheme: 256,
-//     isBrowser: false
-// });
-
-// for(let i in color.webColors) {
-//     let test = color.css(color.webColors[i], "background:black;color:"+color.webColors[i]);
-//     console.log(test);
-// }
-
-// for(let style of color.webStyles) {
-//     for(let bg in color.webColors) {
-//         for(let fg in color.webColors) {
-//             let test = color.style("hi there", color.webColors[fg], color.webColors[bg], style);
-//             console.log(test);
-//         }
-//     }
-// }
-
-// for(let style of color.webStyles) {
-//     for (let bgR = 0; bgR < 255; bgR+=8) {
-//         for (let bgG = 0; bgG < 255; bgG+=8) {
-//             for (let bgB = 0; bgB < 255; bgB+=8) {
-//                 for (let fgR = 0; fgR < 255; fgR+=8) {
-//                     for (let fgG = 0; fgG < 255; fgG+=8) {
-//                         for (let fgB = 0; fgB < 255; fgB+=8) {
-//                             let test = color.style("hi there", [fgR, fgG, fgB], [bgR, bgG, bgB], style);
-//                             console.log(test);
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
-
-
-
-
-// let test = color.style("hi there", "cyan", "red", "italic");
-// console.log(test);
-
-
-///////
-// Test overriding console
-// let console = new Pageant({
-//     scheme: 256,
-//     isBrowser: false
-// });
-// const testJSON = require("../scratch/ansiCols.json");
-// console.log(testJSON);
-// console.log("a string");
-// console.log(123);
-// console.log(true);
