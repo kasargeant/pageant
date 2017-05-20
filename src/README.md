@@ -1,31 +1,38 @@
 # PAGEANT
 
+## One console to rule them all!!!
+
+![Smart sheep?](/docs/img/sheep_1024.png)
+
+### ...smart and seamless colored console output across all devices.
+
 ## ABOUT
 
-I needed color in my console!
+I needed something to help make my console output clearer and more useful.
 
-Not just the odd colored string... but color for whatever code or data I wanted to output!
+* Cleaner than *color.js*,
+* Much more capable than *chalk.js*.
+* Lighter than *terminal-kit*.
+* And faster than all of them!
 
-I looked at colors.js, colour.js, chalk.js, prettyjson, terminal-kit... just to name the more popular options.
+But there wasn't anything.
 
-But I couldn't find any light-weight solution that JUST focused on the console.  Each library module was either too limited, too heavy-weight (functions and footprint) or just simply wasn't supported, never to be brought into a post ES2015 world!
+So I designed Pageant.
 
-So, like any good coder, I decided to write the solution myself.
-
-I called it Pageant, in the medieval sense of a procession of dressed-up and colourful individuals and scenes passing by.  
-
-Just like the data and code output passing by our eyes... in our console.
-
-Anyway, I hope you find it as useful as I!
+And implemented it in clean and modern ES2015.
+  
+*And no prototypes were harmed in the making of this movie!*
 
 
 ## FEATURES
 
-* Implemented cleanly in ES2015.  No prototypes were harmed in this movie!
-* Console text can be dressed with: colors, background colors and styles.
-* Colored or styled text is easily composable.
-* Works the same in Node and in the browser.
-* Works out-the-box - colorizing without configuration.
+* Console output is colored... across all devices,
+* Syntax-highlighting of code and JSON is default.
+* Everything can be customised: colors, background colors and styles.
+* Works automatically with 16, 256 and TrueColor consoles.
+* A single and simple API that does all the heavy-lifting for you.
+* Drop-in replacement for console,
+* Drop-in replacement for color.js or chalk.js 
 * Simple to use - 5 minutes to learn!
 
 
