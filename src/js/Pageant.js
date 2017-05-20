@@ -17,22 +17,24 @@ class Pageant {
      */
     constructor(options = {}) {
         this.defaults = {
+            scheme: 16,
             isBrowser: false
         };
         this.config = Object.assign(this.defaults, options);
 
         this.indentCount = 0;
 
-        this.styles = {
-            plain: "\x1b[0m",
-            bright: "\x1b[1m",
-            dim: "\x1b[2m",
-            italic: "\x1b[3m",
-            underline: "\x1b[4m",
-            blink: "\x1b[5m",
-            inverse: "\x1b[7m",
-            hidden: "\x1b[8m"
-        };
+        this.styles = [
+            "reset",
+            "bright",
+            "dim",
+            "italic",
+            "underline",
+            "blink",
+            "plain",
+            "inverse",
+            "hidden"
+        ];
 
         this.colors = {
             black: "\x1b[30m",
@@ -65,14 +67,14 @@ class Pageant {
             "purple",
             "teal",
             "silver",
-            "undef0",
-            "undef1",
-            "undef2",
-            "undef3",
-            "undef4",
-            "undef5",
-            "undef6",
-            "undef7",
+            "gray-bright",
+            "red-bright",
+            "lime-bright",
+            "yellow-bright",
+            "blue-bright",
+            "fuchsia-bright",
+            "aqua-bright",
+            "white-bright",
             "black1",
             "navy1",
             "darkblue",
@@ -314,6 +316,265 @@ class Pageant {
             "gainsboro1",
             "honeydew"
         ];
+
+        this.ansiColors = {
+            "black": 0,
+            "maroon": 1,
+            "green": 2,
+            "olive": 3,
+            "navy": 4,
+            "purple": 5,
+            "teal": 6,
+            "silver": 7,
+            "gray-bright": 8,
+            "red-bright": 9,
+            "lime-bright": 10,
+            "yellow-bright": 11,
+            "blue-bright": 12,
+            "fuchsia-bright": 13,
+            "aqua-bright": 14,
+            "white-bright": 15,
+            "black1": 0,
+            "navy1": 4,
+            "darkblue": 4,
+            "mediumblue": 4,
+            "mediumblue1": 4,
+            "blue": 4,
+            "darkgreen": 2,
+            "teal1": 6,
+            "teal2": 6,
+            "darkcyan": 6,
+            "royalblue": 4,
+            "dodgerblue": 4,
+            "green1": 2,
+            "teal3": 6,
+            "darkcyan1": 6,
+            "darkcyan2": 6,
+            "darkturquoise": 6,
+            "dodgerblue1": 4,
+            "green2": 2,
+            "darkcyan3": 6,
+            "darkcyan4": 6,
+            "lightseagreen": 6,
+            "darkturquoise1": 6,
+            "deepskyblue": 4,
+            "lime": 2,
+            "springgreen": 2,
+            "springgreen1": 2,
+            "darkturquoise2": 6,
+            "darkturquoise3": 6,
+            "deepskyblue1": 4,
+            "lime1": 2,
+            "springgreen2": 2,
+            "springgreen3": 2,
+            "mediumspringgreen": 2,
+            "cyan": 6,
+            "cyan1": 6,
+            "maroon1": 1,
+            "indigo": 5,
+            "indigo1": 5,
+            "indigo2": 5,
+            "darkviolet": 5,
+            "blue1": 4,
+            "olive1": 3,
+            "dimgray": 7,
+            "dimgray1": 7,
+            "slateblue": 5,
+            "slateblue1": 5,
+            "mediumslateblue": 5,
+            "olive2": 3,
+            "dimgray2": 7,
+            "slategray": 7,
+            "steelblue": 4,
+            "cornflowerblue": 4,
+            "cornflowerblue1": 4,
+            "olive3": 3,
+            "mediumseagreen": 2,
+            "cadetblue": 4,
+            "cadetblue1": 4,
+            "cornflowerblue2": 4,
+            "cornflowerblue3": 4,
+            "lawngreen": 2,
+            "mediumseagreen1": 6,
+            "mediumaquamarine": 6,
+            "mediumaquamarine1": 6,
+            "mediumturquoise": 6,
+            "lightskyblue": 4,
+            "chartreuse": 2,
+            "lightgreen": 2,
+            "lightgreen1": 2,
+            "mediumaquamarine2": 6,
+            "aquamarine": 6,
+            "aquamarine1": 6,
+            "darkred": 1,
+            "purple1": 5,
+            "darkmagenta": 5,
+            "darkmagenta1": 5,
+            "darkviolet1": 5,
+            "darkviolet2": 5,
+            "olive4": 3,
+            "dimgray3": 7,
+            "gray": 7,
+            "slateblue2": 5,
+            "mediumpurple": 5,
+            "mediumslateblue1": 5,
+            "olive5": 3,
+            "gray1": 7,
+            "gray2": 7,
+            "lightslategray": 7,
+            "mediumpurple1": 5,
+            "mediumslateblue2": 5,
+            "olive6": 3,
+            "darkseagreen": 2,
+            "darkseagreen1": 2,
+            "darkgray": 7,
+            "skyblue": 4,
+            "lightskyblue1": 4,
+            "chartreuse1": 2,
+            "yellowgreen": 2,
+            "lightgreen2": 2,
+            "mediumaquamarine3": 2,
+            "skyblue1": 4,
+            "lightskyblue2": 4,
+            "chartreuse2": 2,
+            "lightgreen3": 2,
+            "lightgreen4": 2,
+            "palegreen": 2,
+            "aquamarine2": 6,
+            "aquamarine3": 6,
+            "darkred1": 1,
+            "darkmagenta2": 5,
+            "darkmagenta3": 5,
+            "darkviolet3": 5,
+            "darkviolet4": 5,
+            "darkviolet5": 5,
+            "darkgoldenrod": 3,
+            "indianred": 1,
+            "rosybrown": 3,
+            "mediumorchid": 5,
+            "mediumorchid1": 5,
+            "mediumorchid2": 5,
+            "darkgoldenrod1": 3,
+            "peru": 3,
+            "rosybrown1": 3,
+            "darkgray1": 7,
+            "mediumpurple2": 5,
+            "violet": 5,
+            "darkgoldenrod2": 3,
+            "darkkhaki": 3,
+            "tan": 3,
+            "darkgray2": 7,
+            "lightsteelblue": 4,
+            "lightsteelblue1": 4,
+            "gold": 3,
+            "darkkhaki2": 3,
+            "lightgreen5": 2,
+            "silver1": 7,
+            "lightblue": 4,
+            "lightblue1": 4,
+            "chartreuse3": 2,
+            "greenyellow": 2,
+            "palegreen1": 2,
+            "palegreen2": 2,
+            "paleturquoise": 6,
+            "paleturquoise1": 6,
+            "red": 1,
+            "crimson": 1,
+            "mediumvioletred": 5,
+            "mediumvioletred1": 5,
+            "darkviolet6": 5,
+            "magenta": 5,
+            "chocolate": 5,
+            "indianred1": 5,
+            "palevioletred": 5,
+            "palevioletred1": 5,
+            "orchid": 5,
+            "orchid1": 5,
+            "darkgoldenrod3": 3,
+            "peru1": 3,
+            "lightcoral": 5,
+            "palevioletred2": 5,
+            "orchid2": 5,
+            "violet1": 5,
+            "goldenrod": 3,
+            "sandybrown": 3,
+            "tan1": 3,
+            "tan2": 3,
+            "thistle": 3,
+            "plum": 5,
+            "gold1": 3,
+            "darkkhaki1": 3,
+            "burlywood": 3,
+            "wheat": 3,
+            "lightgray": 7,
+            "lavender": 7,
+            "yellow": 3,
+            "greenyellow1": 2,
+            "khaki": 3,
+            "palegoldenrod": 3,
+            "beige": 3,
+            "lightcyan": 6,
+            "red1": 1,
+            "deeppink": 1,
+            "deeppink1": 1,
+            "deeppink2": 1,
+            "magenta1": 5,
+            "magenta2": 5,
+            "orangered": 1,
+            "tomato": 1,
+            "hotpink": 1,
+            "hotpink1": 1,
+            "hotpink2": 1,
+            "violet2": 5,
+            "darkorange": 1,
+            "coral": 1,
+            "lightcoral1": 1,
+            "hotpink3": 1,
+            "violet3": 5,
+            "violet4": 5,
+            "orange": 1,
+            "sandybrown1": 1,
+            "lightsalmon": 1,
+            "lightpink": 1,
+            "lightpink1": 1,
+            "lightpink2": 1,
+            "gold2": 3,
+            "sandybrown2": 3,
+            "khaki1": 3,
+            "navajowhite": 7,
+            "mistyrose": 7,
+            "lavenderblush": 7,
+            "yellow1": 3,
+            "khaki2": 3,
+            "khaki3": 3,
+            "moccasin": 3,
+            "lightyellow": 3,
+            "white": 7,
+            "black2": 0,
+            "black3": 0,
+            "black4": 0,
+            "darkslategray": 7,
+            "darkslategray1": 7,
+            "darkslategray2": 7,
+            "darkslategray3": 7,
+            "darkslategray4": 7,
+            "dimgray4": 7,
+            "dimgray5": 7,
+            "dimgray6": 7,
+            "gray3": 7,
+            "gray4": 7,
+            "gray5": 7,
+            "lightslategray1": 7,
+            "darkgray3": 7,
+            "darkgray4": 7,
+            "darkgray5": 7,
+            "silver2": 7,
+            "silver3": 7,
+            "lightgray1": 7,
+            "gainsboro": 7,
+            "gainsboro1": 7,
+            "honeydew": 7,
+        };
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -498,26 +759,27 @@ class Pageant {
      */
     whiteBg(text) {return `\x1b[47m${text}\x1b[0m`;}
 
-    rgb(text, r, g, b) {
-        let color = this.fg.rgb[36 * r + 6 * g + b];
-        return `${color}${text}\x1b[0m`;
-    }
-
-    webCode(text, ruleText=null) {
+    /**
+     * Marks the text string with multiple CSS named color characteristics.
+     * @param {string} text - the text string to be colorized.
+     * @param {string} ruleText - the css rules (NOTE: supports only 'background' and 'color' rules).
+     * @returns {string} - the colorized text string.
+     */
+    css(text, ruleText=null) {
         // Sanity check
         if(ruleText === null) {return text;}
 
         let rules = ruleText.split(";");
 
-        console.log("RULES" + rules);
-        console.log("RULES LENGTH" + rules.length);
+        // console.log("RULES" + rules);
+        // console.log("RULES LENGTH" + rules.length);
 
         let result = "";
         for(let rule of rules) {
 // console.log("RULE" + rule);
             let [style, value] = rule.split(":");
-console.log("style: " + style);
-console.log("value: " + value);
+// console.log("style: " + style);
+// console.log("value: " + value);
             if(style !== undefined && value !== undefined) {
                 style = style.trim();
                 value = value.trim();
@@ -527,7 +789,7 @@ console.log("value: " + value);
                     console.error("Error: Unrecognised style rule passed for web coloration.");
                     return text;
                 }
-                result += `\x1b[${z};5;${i}m`;
+                result += `\x1b[3m\x1b[${z};5;${i}m`;
             }
 
         }
@@ -535,16 +797,88 @@ console.log("value: " + value);
         return result += `${text}\x1b[0m`;
     }
 
-    web(text, rule) {
-        let [style, value] = rule.split(":");
-        style.trim();
-        value.trim();
-        let i = this.webColors.indexOf(value);
-        if(i === -1) {
-            console.error("Error: Unrecognised style rule passed for web coloration.");
-            return text;
+
+    _style16(text, color, colorBg, style) {
+
+        let result = "";
+        if(style !== undefined) {
+            let i = this.styles.indexOf(style);
+            if(i === -1) {
+                console.error(`Error: Unrecognised text style: '${style}'.`);
+                return text;
+            }
+            result += `\x1b[${i}m`;
+
         }
-        return `\x1b[38;5;${i}m${text}\x1b[0m`;
+        if(colorBg !== undefined) {
+            let i = this.ansiColors[colorBg];
+            if(i === undefined || i > 7) {
+                console.error(`Error: Unrecognised background color: '${colorBg}'.`);
+                return text;
+            }
+            result += `\x1b[${40 + i}m`;
+
+        }
+        if(color !== undefined) {
+            let i = this.ansiColors[color];
+            if(i === undefined || i > 7) {
+                console.error(`Error: Unrecognised text color: '${color}'.`);
+                return text;
+            }
+            result += `\x1b[${30 + i}m`;
+
+        }
+        return result += `${text}\x1b[0m`;
+    }
+
+    _style256(text, color, colorBg, style) {
+
+        let result = "";
+        if(style !== undefined) {
+            let i = this.styles.indexOf(style);
+            if(i === -1) {
+                console.error(`Error: Unrecognised text style: '${style}'.`);
+                return text;
+            }
+            result += `\x1b[${i}m`;
+
+        }
+        if(colorBg !== undefined) {
+            let i = this.webColors.indexOf(colorBg);
+            if(i === -1) {
+                console.error(`Error: Unrecognised background color: '${colorBg}'.`);
+                return text;
+            }
+            result += `\x1b[48;5;${i}m`;
+
+        }
+        if(color !== undefined) {
+            let i = this.webColors.indexOf(color);
+            if(i === -1) {
+                console.error(`Error: Unrecognised text color: '${color}'.`);
+                return text;
+            }
+            result += `\x1b[38;5;${i}m`;
+
+        }
+        return result += `${text}\x1b[0m`;
+    }
+
+    /**
+     * Marks the text string with multiple CSS named color and style characteristics.
+     * @param {string} text - the text string to be colorized and/or styled.
+     * @param {string} color - the name of the HTML color.
+     * @param {string} colorBg - the name of the HTML background color.
+     * @param {string} style - the name of the HTML text style.
+     * @returns {string} - the colorized/styled text string.
+     */
+    style(text, color, colorBg, style) {
+
+        if(this.config.scheme === 16) {
+            return this._style16(text, color, colorBg, style);
+        } else {
+            return this._style256(text, color, colorBg, style);
+        }
     }
 
     /**
@@ -661,11 +995,15 @@ module.exports = Pageant;
 
 //
 // const color = new Pageant();
-//
-// // for(let i in color.webColors) {
-// //     let test = color.webCode(color.webColors[i], "background:black;color:"+color.webColors[i]);
-// //     console.log(test);
-// // }
+
+// for(let i in color.webColors) {
+//     let test = color.css(color.webColors[i], "background:black;color:"+color.webColors[i]);
+//     console.log(test);
+// }
 //
 // let test = color.webCode("hi there", "background: cyan; color:red;");
+// console.log(test);
+
+
+// let test = color.style("hi there", "cyan", "red", "italic");
 // console.log(test);
