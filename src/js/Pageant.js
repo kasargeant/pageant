@@ -22,6 +22,8 @@ class Pageant {
         };
         this.config = Object.assign(this.defaults, options);
 
+        this.console = (typeof(window) === "undefined") ? global.console : window.console;
+
         this.indentCount = 0;
 
         this.styles = [
@@ -580,39 +582,42 @@ class Pageant {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Warhorse specific
     cmd(value) {
-        this.config.isBrowser ? console.log(`%c${value}`, "background:magenta;") : console.log(this.magentaBg(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "background:magenta;") : this.console.log(this.magentaBg(value));
     }
 
     task(value) {
         value = "  " + value;
-        this.config.isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "background:blue;") : this.console.log(this.blueBg(value));
     }
 
     action(value) {
         value = "  - " + value;
-        this.config.isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "background:blue;") : this.console.log(this.blueBg(value));
     }
     stage(value) {
         value = "    -> " + value;
-        this.config.isBrowser ? console.log(`%c${value}`, "color:cyan;") : console.log(this.cyan(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:cyan;") : this.console.log(this.cyan(value));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Generic
+    log(value) {
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this._styleValue(value));
+    }
     warning(value) {
-        this.config.isBrowser ? console.log(`%c${value}`, "color:orange;") : console.log(this.yellow(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this.yellow(value));
     }
     error(value) {
-        this.config.isBrowser ? console.log(`%c${value}`, "color:red;") : console.log(this.red(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:red;") : this.console.log(this.red(value));
     }
 
     info(value) {
-        this.config.isBrowser ? console.info(value) : console.log(this._stringifyValue(value));
+        this.config.isBrowser ? console.info(value) : this.console.log(this._stringifyValue(value));
     }
 
     stringify(value) {
-        // console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
-        console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
+        // this.console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
+        this.console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -771,15 +776,15 @@ class Pageant {
 
         let rules = ruleText.split(";");
 
-        // console.log("RULES" + rules);
-        // console.log("RULES LENGTH" + rules.length);
+        // this.console.log("RULES" + rules);
+        // this.console.log("RULES LENGTH" + rules.length);
 
         let result = "";
         for(let rule of rules) {
-// console.log("RULE" + rule);
+// this.console.log("RULE" + rule);
             let [style, value] = rule.split(":");
-// console.log("style: " + style);
-// console.log("value: " + value);
+// this.console.log("style: " + style);
+// this.console.log("value: " + value);
             if(style !== undefined && value !== undefined) {
                 style = style.trim();
                 value = value.trim();
@@ -1015,7 +1020,40 @@ class Pageant {
                 return this.cyan(`$${value}`);
 
             default:
-                console.log("UNHANDLED TYPE: " + type);
+                this.console.log(`Error: Unhandled type: '${type}' for value: ${value}`);
+                return;
+        }
+    }
+
+    _styleValue(value) {
+        let type = typeof(value);
+        switch(type) {
+            case "undefined":
+                return "";
+
+            case "object":
+                if(value.constructor === Array) {
+                    return this._stringifyArray(value);
+                } else {
+                    return this._stringifyObject(value);
+                }
+            case "function":
+                return this._stringifyFunction(value, "Pageant");
+
+            case "boolean":
+                return this.magenta("" + value);
+
+            case "number":
+                return this.blue("" + value);
+
+            case "string":
+                return this.green("" + value);
+
+            case "symbol":
+                return this.cyan("" + value);
+
+            default:
+                this.console.log(`Error: Unhandled type: '${type}' for value: ${value}`);
                 return;
         }
     }
@@ -1025,9 +1063,12 @@ class Pageant {
 // Exports
 module.exports = Pageant;
 
+
+
+
 //
 // const color = new Pageant({
-//     scheme: "full",
+//     scheme: 256,
 //     isBrowser: false
 // });
 
@@ -1068,3 +1109,16 @@ module.exports = Pageant;
 
 // let test = color.style("hi there", "cyan", "red", "italic");
 // console.log(test);
+
+
+///////
+// Test overriding console
+// let console = new Pageant({
+//     scheme: 256,
+//     isBrowser: false
+// });
+// const testJSON = require("../scratch/ansiCols.json");
+// console.log(testJSON);
+// console.log("a string");
+// console.log(123);
+// console.log(true);
