@@ -22,6 +22,8 @@ class Pageant {
         };
         this.config = Object.assign(this.defaults, options);
 
+        this.console = (typeof(window) === "undefined") ? global.console : window.console;
+
         this.indentCount = 0;
 
         this.styles = [
@@ -580,39 +582,42 @@ class Pageant {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Warhorse specific
     cmd(value) {
-        this.config.isBrowser ? console.log(`%c${value}`, "background:magenta;") : console.log(this.magentaBg(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "background:magenta;") : this.console.log(this.magentaBg(value));
     }
 
     task(value) {
         value = "  " + value;
-        this.config.isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "background:blue;") : this.console.log(this.blueBg(value));
     }
 
     action(value) {
         value = "  - " + value;
-        this.config.isBrowser ? console.log(`%c${value}`, "background:blue;") : console.log(this.blueBg(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "background:blue;") : this.console.log(this.blueBg(value));
     }
     stage(value) {
         value = "    -> " + value;
-        this.config.isBrowser ? console.log(`%c${value}`, "color:cyan;") : console.log(this.cyan(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:cyan;") : this.console.log(this.cyan(value));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Generic
+    log(value) {
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this._styleValue(value));
+    }
     warning(value) {
-        this.config.isBrowser ? console.log(`%c${value}`, "color:orange;") : console.log(this.yellow(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this.yellow(value));
     }
     error(value) {
-        this.config.isBrowser ? console.log(`%c${value}`, "color:red;") : console.log(this.red(value));
+        this.config.isBrowser ? this.console.log(`%c${value}`, "color:red;") : this.console.log(this.red(value));
     }
 
     info(value) {
-        this.config.isBrowser ? console.info(value) : console.log(this._stringifyValue(value));
+        this.config.isBrowser ? console.info(value) : this.console.log(this._stringifyValue(value));
     }
 
     stringify(value) {
-        // console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
-        console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
+        // this.console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
+        this.console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -771,15 +776,15 @@ class Pageant {
 
         let rules = ruleText.split(";");
 
-        // console.log("RULES" + rules);
-        // console.log("RULES LENGTH" + rules.length);
+        // this.console.log("RULES" + rules);
+        // this.console.log("RULES LENGTH" + rules.length);
 
         let result = "";
         for(let rule of rules) {
-// console.log("RULE" + rule);
+// this.console.log("RULE" + rule);
             let [style, value] = rule.split(":");
-// console.log("style: " + style);
-// console.log("value: " + value);
+// this.console.log("style: " + style);
+// this.console.log("value: " + value);
             if(style !== undefined && value !== undefined) {
                 style = style.trim();
                 value = value.trim();
@@ -812,7 +817,7 @@ class Pageant {
         }
         if(colorBg !== undefined) {
             let i = this.ansiColors[colorBg];
-            if(i === undefined || i > 7) {
+            if(i === undefined || i > 15) {
                 console.error(`Error: Unrecognised background color: '${colorBg}'.`);
                 return text;
             }
@@ -821,7 +826,7 @@ class Pageant {
         }
         if(color !== undefined) {
             let i = this.ansiColors[color];
-            if(i === undefined || i > 7) {
+            if(i === undefined || i > 15) {
                 console.error(`Error: Unrecognised text color: '${color}'.`);
                 return text;
             }
@@ -845,7 +850,7 @@ class Pageant {
         }
         if(colorBg !== undefined) {
             let i = this.webColors.indexOf(colorBg);
-            if(i === -1) {
+            if(i === -1 || i > 255) {
                 console.error(`Error: Unrecognised background color: '${colorBg}'.`);
                 return text;
             }
@@ -854,7 +859,7 @@ class Pageant {
         }
         if(color !== undefined) {
             let i = this.webColors.indexOf(color);
-            if(i === -1) {
+            if(i === -1 || i > 255) {
                 console.error(`Error: Unrecognised text color: '${color}'.`);
                 return text;
             }
@@ -864,11 +869,41 @@ class Pageant {
         return result += `${text}\x1b[0m`;
     }
 
+    _styleTruecolor(text, color, colorBg, style) {
+
+        let result = "";
+        if(style !== undefined) {
+            let i = this.styles.indexOf(style);
+            if(i === -1) {
+                console.error(`Error: Unrecognised text style: '${style}'.`);
+                return text;
+            }
+            result += `\x1b[${i}m`;
+        }
+        if(colorBg !== undefined && colorBg.constructor === Array) {
+            if(colorBg.length !== 3) {
+                console.error(`Error: Unrecognised background color: '${colorBg}'.`);
+                return text;
+            }
+            result += `\x1b[48;2;${colorBg[0]};${colorBg[1]};${colorBg[2]}m`;
+
+        }
+        if(color !== undefined && color.constructor === Array) {
+            if(color.length !== 3) {
+                console.error(`Error: Unrecognised text color: '${color}'.`);
+                return text;
+            }
+            result += `\x1b[38;2;${color[0]};${color[1]};${color[2]}m`;
+
+        }
+        return result += `${text}\x1b[0m`;
+    }
+
     /**
      * Marks the text string with multiple CSS named color and style characteristics.
      * @param {string} text - the text string to be colorized and/or styled.
-     * @param {string} color - the name of the HTML color.
-     * @param {string} colorBg - the name of the HTML background color.
+     * @param {string|Array} color - the name of the HTML color.
+     * @param {string|Array} colorBg - the name of the HTML background color.
      * @param {string} style - the name of the HTML text style.
      * @returns {string} - the colorized/styled text string.
      */
@@ -876,8 +911,10 @@ class Pageant {
 
         if(this.config.scheme === 16) {
             return this._style16(text, color, colorBg, style);
-        } else {
+        } else if(this.config.scheme === 256) {
             return this._style256(text, color, colorBg, style);
+        } else if(this.config.scheme === "full") {
+            return this._styleTruecolor(text, color, colorBg, style);
         }
     }
 
@@ -983,7 +1020,40 @@ class Pageant {
                 return this.cyan(`$${value}`);
 
             default:
-                console.log("UNHANDLED TYPE: " + type);
+                this.console.log(`Error: Unhandled type: '${type}' for value: ${value}`);
+                return;
+        }
+    }
+
+    _styleValue(value) {
+        let type = typeof(value);
+        switch(type) {
+            case "undefined":
+                return "";
+
+            case "object":
+                if(value.constructor === Array) {
+                    return this._stringifyArray(value);
+                } else {
+                    return this._stringifyObject(value);
+                }
+            case "function":
+                return this._stringifyFunction(value, "Pageant");
+
+            case "boolean":
+                return this.magenta("" + value);
+
+            case "number":
+                return this.blue("" + value);
+
+            case "string":
+                return this.green("" + value);
+
+            case "symbol":
+                return this.cyan("" + value);
+
+            default:
+                this.console.log(`Error: Unhandled type: '${type}' for value: ${value}`);
                 return;
         }
     }
@@ -993,17 +1063,62 @@ class Pageant {
 // Exports
 module.exports = Pageant;
 
+
+
+
 //
-// const color = new Pageant();
+// const color = new Pageant({
+//     scheme: 256,
+//     isBrowser: false
+// });
 
 // for(let i in color.webColors) {
 //     let test = color.css(color.webColors[i], "background:black;color:"+color.webColors[i]);
 //     console.log(test);
 // }
-//
-// let test = color.webCode("hi there", "background: cyan; color:red;");
-// console.log(test);
+
+// for(let style of color.styles) {
+//     for(let bg in color.webColors) {
+//         for(let fg in color.webColors) {
+//             let test = color.style("hi there", color.webColors[fg], color.webColors[bg], style);
+//             console.log(test);
+//         }
+//     }
+// }
+
+// for(let style of color.styles) {
+//     for (let bgR = 0; bgR < 255; bgR+=8) {
+//         for (let bgG = 0; bgG < 255; bgG+=8) {
+//             for (let bgB = 0; bgB < 255; bgB+=8) {
+//                 for (let fgR = 0; fgR < 255; fgR+=8) {
+//                     for (let fgG = 0; fgG < 255; fgG+=8) {
+//                         for (let fgB = 0; fgB < 255; fgB+=8) {
+//                             let test = color.style("hi there", [fgR, fgG, fgB], [bgR, bgG, bgB], style);
+//                             console.log(test);
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
+
 
 
 // let test = color.style("hi there", "cyan", "red", "italic");
 // console.log(test);
+
+
+///////
+// Test overriding console
+// let console = new Pageant({
+//     scheme: 256,
+//     isBrowser: false
+// });
+// const testJSON = require("../scratch/ansiCols.json");
+// console.log(testJSON);
+// console.log("a string");
+// console.log(123);
+// console.log(true);
