@@ -110,7 +110,8 @@ describe("Colorization functions", function() {
     });
 
     it("should be able mark a string with overlapping characteristics", function() {
-        expect(color.multi(DUMMY_STRING, "blue", "yellow", "italic")).toBe(`\x1b[44m\x1b[33m\x1b[3m${DUMMY_STRING}\x1b[0m`);
+        console.log(color.multi(DUMMY_STRING, "blue", "yellow", "italic"));
+        expect(color.multi(DUMMY_STRING, "yellow", "blue", "italic")).toBe(`\x1b[3m\x1b[44m\x1b[33m${DUMMY_STRING}\x1b[0m`);
     });
 
 

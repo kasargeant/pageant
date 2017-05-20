@@ -32,7 +32,13 @@
     "test": "jasmine"
   },
   "devDependencies": {
-    "jasmine": "^2.6.0",
+    "jest-cli": "^20.0.3",
+    "jest-html-reporter": "^0.1.0",
     "minami": "^1.2.3"
+  },
+  "jest-html-reporter": {
+    "pageTitle": "Test Results",
+    "outputPath": "docs/tests/index.html",
+    "includeFailureMsg": false
   }
 }

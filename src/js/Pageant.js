@@ -18,7 +18,8 @@ class Pageant {
     constructor(options = {}) {
         this.defaults = {
             scheme: 16,
-            isBrowser: false
+            isBrowser: false,
+            debug: false
         };
         this.config = Object.assign(this.defaults, options);
 
@@ -26,40 +27,8 @@ class Pageant {
 
         this.indentCount = 0;
 
-        this.styles = [
-            "reset",
-            "bright",
-            "dim",
-            "italic",
-            "underline",
-            "blink",
-            "plain",
-            "inverse",
-            "hidden"
-        ];
-
-        this.colors = {
-            black: "\x1b[30m",
-            red: "\x1b[31m",
-            green: "\x1b[32m",
-            yellow: "\x1b[33m",
-            blue: "\x1b[34m",
-            magenta: "\x1b[35m",
-            cyan: "\x1b[36m",
-            white: "\x1b[37m"
-        };
-
-        this.colorsBg = {
-            black: "\x1b[40m",
-            red: "\x1b[41m",
-            green: "\x1b[42m",
-            yellow: "\x1b[43m",
-            blue: "\x1b[44m",
-            magenta: "\x1b[45m",
-            cyan: "\x1b[46m",
-            white: "\x1b[47m"
-        };
-
+        this.styles = ["reset", "bright", "dim", "italic", "underline", "blink", "plain", "inverse", "hidden"];
+        this.colors = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"];
         this.webColors = [
             "black",
             "maroon",
@@ -319,7 +288,7 @@ class Pageant {
             "honeydew"
         ];
 
-        this.ansiColors = {
+        this.webAnsiLookup = {
             "black": 0,
             "maroon": 1,
             "green": 2,
@@ -601,6 +570,11 @@ class Pageant {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Generic
+    debug(value) {
+        if(this.config.debug) {
+            this.log(value);
+        }
+    }
     log(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this._styleValue(value));
     }
@@ -816,7 +790,7 @@ class Pageant {
 
         }
         if(colorBg !== undefined) {
-            let i = this.ansiColors[colorBg];
+            let i = this.webAnsiLookup[colorBg];
             if(i === undefined || i > 15) {
                 console.error(`Error: Unrecognised background color: '${colorBg}'.`);
                 return text;
@@ -825,7 +799,7 @@ class Pageant {
 
         }
         if(color !== undefined) {
-            let i = this.ansiColors[color];
+            let i = this.webAnsiLookup[color];
             if(i === undefined || i > 15) {
                 console.error(`Error: Unrecognised text color: '${color}'.`);
                 return text;
@@ -921,16 +895,20 @@ class Pageant {
     /**
      * Marks the text string with multiple color and style characteristics.
      * @param {string} text - the text string to be colorized.
-     * @param {string} colorBg - the color of the background.
      * @param {string} color - the color of the text string.
+     * @param {string} colorBg - the color of the background.
      * @param {string} style - the style of the text string.
      * @returns {string} - the colorized text string.
      */
-    multi(text, colorBg="black", color="white", style="plain") {
-        let colorCode = this.colors[color];
-        let colorBgCode = this.colorsBg[colorBg];
-        let styleCode = this.styles[style];
-        return `${colorBgCode}${colorCode}${styleCode}${text}\x1b[0m`;
+    multi(text, color="white", colorBg="black", style="plain") {
+        let colorCode =  this.colors.indexOf(color);
+        let colorBgCode = this.colors.indexOf(colorBg);
+        let styleCode = this.styles.indexOf(style);
+        if(colorCode === -1 || colorBgCode === -1 || styleCode === -1) {
+            console.error("Error: Unrecognised multi style definition");
+            return text;
+        }
+        return `\x1b[${styleCode}m\x1b[${40 + colorBgCode}m\x1b[${30 + colorCode}m${text}\x1b[0m`;
     }
 
 
@@ -1058,13 +1036,79 @@ class Pageant {
         }
     }
 
+    /**
+     * Demonstrates ANSI terminal color and style console support (16 colors).
+     * @returns {void}
+     */
+    demoAnsiColor() {
+        let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
+        for(let style of this.styles) {
+            for(let bg in this.colors) {
+                for(let fg in this.colors) {
+                    let test = this.multi(text, this.colors[fg], this.colors[bg], style);
+                    console.log(test);
+                }
+            }
+        }
+    }
+
+    /**
+     * Demonstrates named web color and style console support (256 colors).
+     * @returns {void}
+     */
+    demoWebColor() {
+        let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
+        for(let style of this.styles) {
+            for(let bg in this.webColors) {
+                for(let fg in this.webColors) {
+                    let test = this._style256(text, this.webColors[fg], this.webColors[bg], style);
+                    console.log(test);
+                }
+            }
+        }
+    }
+
+    /**
+     * Demonstrates TrueColor console support.
+     * @returns {void}
+     */
+    demoTrueColor() {
+        let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
+        const inc = 4;
+        for(let style of this.styles) {
+            for(let bgR = 0; bgR < 255; bgR += inc) {
+                for(let bgG = 0; bgG < 255; bgG += inc) {
+                    for(let bgB = 0; bgB < 255; bgB += inc) {
+                        for(let fgR = 0; fgR < 255; fgR += inc) {
+                            for(let fgG = 0; fgG < 255; fgG += inc) {
+                                for(let fgB = 0; fgB < 255; fgB += inc) {
+                                    let test = color._styleTruecolor(text, [fgR, fgG, fgB], [bgR, bgG, bgB], style);
+                                    console.log(test);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
 }
 
 // Exports
 module.exports = Pageant;
 
-
-
+// const color = new Pageant({
+//     scheme: 256,
+//     isBrowser: false
+// });
+//
+// color.demoAnsiColor();
+// color.demoWebColor();
+// color.demoTrueColor();
 
 //
 // const color = new Pageant({
@@ -1077,7 +1121,7 @@ module.exports = Pageant;
 //     console.log(test);
 // }
 
-// for(let style of color.styles) {
+// for(let style of color.webStyles) {
 //     for(let bg in color.webColors) {
 //         for(let fg in color.webColors) {
 //             let test = color.style("hi there", color.webColors[fg], color.webColors[bg], style);
@@ -1086,7 +1130,7 @@ module.exports = Pageant;
 //     }
 // }
 
-// for(let style of color.styles) {
+// for(let style of color.webStyles) {
 //     for (let bgR = 0; bgR < 255; bgR+=8) {
 //         for (let bgG = 0; bgG < 255; bgG+=8) {
 //             for (let bgB = 0; bgB < 255; bgB+=8) {

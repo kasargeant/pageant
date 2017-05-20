@@ -40,7 +40,7 @@ function tasks(warhorse) {
     warhorse.cmd("precompile", function() {});
 
     warhorse.cmd("test", function() {
-        warhorse.use("test-js", "./test/*.test.js", {});
+        warhorse.use("test-js", "./test/js/*.test.js", {});
     });
 
 
@@ -67,7 +67,7 @@ function tasks(warhorse) {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     warhorse.task("test-js", function() {
-        warhorse.testJS();
+        warhorse.testJS({"onlyChanged": false});
     });
 
 }
