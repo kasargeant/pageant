@@ -1,35 +1,35 @@
 ![PAGEANT](/docs/img/pageant_logo.png)
 
-### Smart and seamless colored console output across all devices.
+### Smart and seamless colored console output across all platforms.
 
 ![Smart sheep?](/docs/img/sheep_1024.png)
 
 No configuration necessary.
 
-[ *And no prototypes were harmed in the making of this movie!* ]
+[ *And no built-ins were harmed in the making of this movie!* ]
 
 ## ABOUT
 
-I needed something to help make my console output clearer and more useful.
+I wanted to enhance the console output of a project I was working on.  I needed color, certainly... but I also needed a better way to display things in the console like JSON.
 
-It had to be:-
+I looked at what was available on NPM and GitHub and searched for a single solution.  After trying out and experimenting with about twenty different packages - and finding all of them missing something essential.  I concluded that what I wanted, had to be:-
 
-* More capable than *chalk.js*
+* More capable than *chalk.js*, *color.js*, *colour.js*, *col.js*, etc etc...
 > ..."Hey, where's my color orange?"
-* Cleaner than *color.js*
-> ..."You did what with to the string prototype???"
-* More interoperable than *prettyjson*.
+* More standard than things like *prettyjson*
 > ..."Look, I just wanted standard JSON... not this YAMLized 'something'!!!"
 * Lighter than *terminal-kit*.
-> ..."I'm asking for a better console... not a rocket-ship with six different kitchen sinks and a dog kennel!"
+> ..."I'm asking for better console output... not a rocket-ship with six different kitchen sinks and a dog kennel!"
 * And to work everywhere just the same.  At least in both the browser and with Node.
-> "Erm... help me NPM search engine... help me!!!"
+> "Ok, NPM search results: 0  ...help!!!"
 
-There simply wasn't anything that systematically colorised console output to the high standards that are now possible on typical user devices.
+Thus, faced with the abyss... I did what any good coder would do... and wrote the solution myself.  
 
-And so, after a certain amount of swearing... I decided to write Pageant!  
+I share it with you now... and I've called it **Pageant**!  (After the ye old medievally colorful procession thingies...)  
 
-Oh, and I implemented it in modern and vanilla JavaScript.  Not a dependency in sight! ;)
+Unlike the name, the code is implemented in very modern and very vanilla JavaScript!  
+
+And not a package dependency in sight! ;)
   
 
 ## FEATURES

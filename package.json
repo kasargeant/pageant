@@ -29,7 +29,7 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "test": "jasmine"
+    "test": "jest --verbose"
   },
   "devDependencies": {
     "jest-cli": "^20.0.3",
