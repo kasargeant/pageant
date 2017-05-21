@@ -1,12 +1,12 @@
 ![PAGEANT](/docs/img/pageant_logo.png)
 
-## One console to rule them all!!!
+### Smart and seamless colored console output across all devices.
 
 ![Smart sheep?](/docs/img/sheep_1024.png)
 
-### ...smart and seamless colored console output across all devices.
+No configuration necessary.
 
-[ *No prototypes were harmed in the making of this movie!* ]
+[ *And no prototypes were harmed in the making of this movie!* ]
 
 ## ABOUT
 
@@ -17,31 +17,37 @@ It had to be:-
 * More capable than *chalk.js*
 > ..."Hey, where's my color orange?"
 * Cleaner than *color.js*
-> ..."Because, what have you done to that prototype!"
+> ..."You did what with to the string prototype???"
 * More interoperable than *prettyjson*.
 > ..."Look, I just wanted standard JSON... not this YAMLized 'something'!!!"
 * Lighter than *terminal-kit*.
 > ..."I'm asking for a better console... not a rocket-ship with six different kitchen sinks and a dog kennel!"
 * And to work everywhere just the same.  At least in both the browser and with Node.
-> But there simply wasn't anything that did what I wanted....
+> "Erm... help me NPM search engine... help me!!!"
 
-So I wrote Pageant!  
+There simply wasn't anything that systematically colorised console output to the high standards that are now possible on typical user devices.
 
-Implemented in modern vanilla JavaScript.  Not a dependency in sight!
+And so, after a certain amount of swearing... I decided to write Pageant!  
+
+Oh, and I implemented it in modern and vanilla JavaScript.  Not a dependency in sight! ;)
   
 
 ## FEATURES
 
-Yes, but what the hell can it do for me???
+Go on... amaze me!
 
-* Console output is fully-colored... across all devices,
-* A short and simple API - utilising a familiar CSS naming scheme. 
-* Syntax-highlighting of code and JSON is default.
-* Works automatically between 16, 256 and TrueColor capable  consoles.
+* Console output is fully-colored... consistent across Node and browsers,
+* Offers developers the entire color palette available for 16, 256 and TrueColor capable consoles.
+* A single and simple API - utilising the [CSS3 Named Colors](https://www.w3.org/TR/css-color-4/#named-colors) scheme or, if needed, direct RGB values. 
+* Syntax-highlighting of code and JSON by default.
 * Everything can be customised - on the fly - or in a single config file.
-* Drop-in replacement for console,
-* Drop-in replacement for color.js or chalk.js 
-* Simple to use - and just 5 minutes to learn! ;)
+* A safe drop-in replacement for the built-in console,
+* A drop-in replacement for colorizers like: *chalk* and *color.js* 
+* So simple to use... 
+
+...that by the end of this page and you'll already have learnt all you need.
+
+Happy colorizing! ;)
 
 
 ## INSTALLATION
