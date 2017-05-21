@@ -1,4 +1,4 @@
-# PAGEANT
+![PAGEANT](/docs/img/pageant_logo_72.svg)
 
 ## One console to rule them all!!!
 
