@@ -18,7 +18,8 @@ class Pageant {
     constructor(options = {}) {
         this.defaults = {
             scheme: 16,
-            isBrowser: false
+            isBrowser: false,
+            debug: false
         };
         this.config = Object.assign(this.defaults, options);
 
@@ -26,40 +27,8 @@ class Pageant {
 
         this.indentCount = 0;
 
-        this.styles = [
-            "reset",
-            "bright",
-            "dim",
-            "italic",
-            "underline",
-            "blink",
-            "plain",
-            "inverse",
-            "hidden"
-        ];
-
-        this.colors = {
-            black: "\x1b[30m",
-            red: "\x1b[31m",
-            green: "\x1b[32m",
-            yellow: "\x1b[33m",
-            blue: "\x1b[34m",
-            magenta: "\x1b[35m",
-            cyan: "\x1b[36m",
-            white: "\x1b[37m"
-        };
-
-        this.colorsBg = {
-            black: "\x1b[40m",
-            red: "\x1b[41m",
-            green: "\x1b[42m",
-            yellow: "\x1b[43m",
-            blue: "\x1b[44m",
-            magenta: "\x1b[45m",
-            cyan: "\x1b[46m",
-            white: "\x1b[47m"
-        };
-
+        this.styles = ["reset", "bright", "dim", "italic", "underline", "blink", "plain", "inverse", "hidden"];
+        this.colors = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"];
         this.webColors = [
             "black",
             "maroon",
@@ -319,7 +288,7 @@ class Pageant {
             "honeydew"
         ];
 
-        this.ansiColors = {
+        this.webAnsiLookup = {
             "black": 0,
             "maroon": 1,
             "green": 2,
@@ -577,6 +546,25 @@ class Pageant {
             "gainsboro1": 7,
             "honeydew": 7,
         };
+
+
+
+        for(let idx = 0; idx < this.styles.length; idx++) {
+            let key = this.styles[idx];
+            this[key] = function(text) {return `\x1b[${idx}m${text}\x1b[0m`;};
+        }
+
+        for(let idx = 0; idx < this.webColors.length; idx++) {
+            let key = this.webColors[idx];
+            if(this.config.scheme === "16") {
+                let degrade = this.webAnsiLookup[key];
+                this[key] = function(text) {return `\x1b[${30 + degrade}m${text}\x1b[0m`;};
+                this[key+"Bg"] = function(text) {return `\x1b[${40 + degrade}m${text}\x1b[0m`;};
+            } else {
+                this[key] = function(text) {return `\x1b[38;5;${idx}m${text}\x1b[0m`;};
+                this[key+"Bg"] = function(text) {return `\x1b[48;5;${idx}m${text}\x1b[0m`;};
+            }
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -600,169 +588,208 @@ class Pageant {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Generic
+    // Console methods: enhanced
+
+    /**
+     * Logs ONLY IF the console's debug configuration has been set.
+     * Thus unlike the standard console.debug() which is merely an alias for console.log() - you can
+     * switch on or off debug logging in Pageant by setting the options.debug flag at instantiation.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
+    debug(value) {
+        if(this.config.debug) {
+            this.log(value);
+        }
+    }
+    /**
+     * Outputs a log message to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     log(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this._styleValue(value));
     }
+
+    /**
+     * Outputs a warning message to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     warning(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this.yellow(value));
     }
+
+    /**
+     * Outputs an error message to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     error(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:red;") : this.console.log(this.red(value));
     }
+    /**
+     * Outputs a exception message to the enhanced console (alias for console.error).
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
+    exception(value) {
+        this.error(value);
+    }
 
+    /**
+     * Outputs an expanded listing of the value to the enhanced console.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     info(value) {
         this.config.isBrowser ? console.info(value) : this.console.log(this._stringifyValue(value));
     }
 
+    /**
+     * Outputs an object to the enhanced console - using standard formatting.
+     * @param {*} value - Any JS or JSON value.
+     * @returns {void}
+     */
     stringify(value) {
         // this.console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
         this.console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
     }
 
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {Object|Array} data - The data to display.
+     * @returns {void}
+     */
+    table(data) {
+        this.console.table(data);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    trace() {
+        this.console.trace();
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // COLORATION
+    // Console methods: compatibility
 
     /**
-     * Marks the text string with a bright style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
      */
-    bright(text) {return `\x1b[1m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a dim style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    dim(text) {return `\x1b[2m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with an italic style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    italic(text) {return `\x1b[3m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with an underlined style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    underline(text) {return `\x1b[4m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a blinking style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    blink(text) {return `\x1b[5m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a inversed style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    inverse(text) {return `\x1b[7m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as hidden.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    hidden(text) {return `\x1b[8m${text}\x1b[0m`;}
+    assert(...args) {
+        this.console.assert(...args);
+    }
 
     /**
-     * Marks the text string as black.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
      */
-    black(text) {return `\x1b[30m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as red.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    red(text) {return `\x1b[31m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as green.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    green(text) {return `\x1b[32m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as yellow.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    yellow(text) {return `\x1b[33m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as blue.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    blue(text) {return `\x1b[34m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as magenta.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    magenta(text) {return `\x1b[35m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as cyan.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    cyan(text) {return `\x1b[36m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as white.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    white(text) {return `\x1b[37m${text}\x1b[0m`;}
+    clear() {
+        this.console.clear();
+    }
 
     /**
-     * Marks the text string with a black background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be counted.
+     * @returns {void}
      */
-    blackBg(text) {return `\x1b[40m${text}\x1b[0m`;}
+    count(label) {
+        this.console.count(label);
+    }
+
     /**
-     * Marks the text string with a red background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
      */
-    redBg(text) {return `\x1b[41m${text}\x1b[0m`;}
+    dir(...args) {
+        this.console.dir(...args);
+    }
+
     /**
-     * Marks the text string with a green background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} args - The arguments for assertion.
+     * @returns {void}
      */
-    greenBg(text) {return `\x1b[42m${text}\x1b[0m`;}
+    dirxml(...args) {
+        this.console.dirxml(...args);
+    }
+
     /**
-     * Marks the text string with a yellow background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @returns {void}
      */
-    yellowBg(text) {return `\x1b[43m${text}\x1b[0m`;}
+    group() {
+        this.console.group();
+    }
+
     /**
-     * Marks the text string with a blue background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @returns {void}
      */
-    blueBg(text) {return `\x1b[44m${text}\x1b[0m`;}
+    groupCollapsed() {
+        this.console.groupCollapsed();
+    }
+
     /**
-     * Marks the text string with a magenta background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @returns {void}
      */
-    magentaBg(text) {return `\x1b[45m${text}\x1b[0m`;}
+    groupEnd() {
+        this.console.groupEnd();
+    }
+
     /**
-     * Marks the text string with a cyan background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} name - A name to identify this profile.
+     * @returns {void}
      */
-    cyanBg(text) {return `\x1b[46m${text}\x1b[0m`;}
+    profile(name) {
+        this.console.profile(name);
+    }
+
     /**
-     * Marks the text string with a white background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} name - A name to identify this profile.
+     * @returns {void}
      */
-    whiteBg(text) {return `\x1b[47m${text}\x1b[0m`;}
+    profileEnd(name) {
+        this.console.profileEnd(name);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    time(label) {
+        this.console.time(label);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    timeEnd(label) {
+        this.console.timeEnd(label);
+    }
+
+    /**
+     * Same as standard console - exposed for compatibility only.
+     * @param {*} label - The label to be used.
+     * @returns {void}
+     */
+    timeStamp(label) {
+        this.console.timeStamp(label);
+    }
 
     /**
      * Marks the text string with multiple CSS named color characteristics.
@@ -771,20 +798,15 @@ class Pageant {
      * @returns {string} - the colorized text string.
      */
     css(text, ruleText=null) {
+
         // Sanity check
         if(ruleText === null) {return text;}
 
         let rules = ruleText.split(";");
 
-        // this.console.log("RULES" + rules);
-        // this.console.log("RULES LENGTH" + rules.length);
-
         let result = "";
         for(let rule of rules) {
-// this.console.log("RULE" + rule);
             let [style, value] = rule.split(":");
-// this.console.log("style: " + style);
-// this.console.log("value: " + value);
             if(style !== undefined && value !== undefined) {
                 style = style.trim();
                 value = value.trim();
@@ -796,9 +818,7 @@ class Pageant {
                 }
                 result += `\x1b[3m\x1b[${z};5;${i}m`;
             }
-
         }
-
         return result += `${text}\x1b[0m`;
     }
 
@@ -816,7 +836,7 @@ class Pageant {
 
         }
         if(colorBg !== undefined) {
-            let i = this.ansiColors[colorBg];
+            let i = this.webAnsiLookup[colorBg];
             if(i === undefined || i > 15) {
                 console.error(`Error: Unrecognised background color: '${colorBg}'.`);
                 return text;
@@ -825,7 +845,7 @@ class Pageant {
 
         }
         if(color !== undefined) {
-            let i = this.ansiColors[color];
+            let i = this.webAnsiLookup[color];
             if(i === undefined || i > 15) {
                 console.error(`Error: Unrecognised text color: '${color}'.`);
                 return text;
@@ -909,11 +929,11 @@ class Pageant {
      */
     style(text, color, colorBg, style) {
 
-        if(this.config.scheme === 16) {
+        if(this.config.scheme === "16") {
             return this._style16(text, color, colorBg, style);
-        } else if(this.config.scheme === 256) {
+        } else if(this.config.scheme === "256") {
             return this._style256(text, color, colorBg, style);
-        } else if(this.config.scheme === "full") {
+        } else if(this.config.scheme === "truecolor") {
             return this._styleTruecolor(text, color, colorBg, style);
         }
     }
@@ -921,16 +941,20 @@ class Pageant {
     /**
      * Marks the text string with multiple color and style characteristics.
      * @param {string} text - the text string to be colorized.
-     * @param {string} colorBg - the color of the background.
      * @param {string} color - the color of the text string.
+     * @param {string} colorBg - the color of the background.
      * @param {string} style - the style of the text string.
      * @returns {string} - the colorized text string.
      */
-    multi(text, colorBg="black", color="white", style="plain") {
-        let colorCode = this.colors[color];
-        let colorBgCode = this.colorsBg[colorBg];
-        let styleCode = this.styles[style];
-        return `${colorBgCode}${colorCode}${styleCode}${text}\x1b[0m`;
+    multi(text, color="white", colorBg="black", style="plain") {
+        let colorCode =  this.colors.indexOf(color);
+        let colorBgCode = this.colors.indexOf(colorBg);
+        let styleCode = this.styles.indexOf(style);
+        if(colorCode === -1 || colorBgCode === -1 || styleCode === -1) {
+            console.error("Error: Unrecognised multi style definition");
+            return text;
+        }
+        return `\x1b[${styleCode}m\x1b[${40 + colorBgCode}m\x1b[${30 + colorCode}m${text}\x1b[0m`;
     }
 
 
@@ -1058,67 +1082,67 @@ class Pageant {
         }
     }
 
+    /**
+     * Demonstrates ANSI terminal color and style console support (16 colors).
+     * @returns {void}
+     */
+    demoAnsiColor() {
+        let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
+        for(let style of this.styles) {
+            for(let bg in this.colors) {
+                for(let fg in this.colors) {
+                    let test = this.multi(text, this.colors[fg], this.colors[bg], style);
+                    console.log(test);
+                }
+            }
+        }
+    }
+
+    /**
+     * Demonstrates named web color and style console support (256 colors).
+     * @returns {void}
+     */
+    demoWebColor() {
+        let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
+        for(let style of this.styles) {
+            for(let bg in this.webColors) {
+                for(let fg in this.webColors) {
+                    let test = this._style256(text, this.webColors[fg], this.webColors[bg], style);
+                    console.log(test);
+                }
+            }
+        }
+    }
+
+    /**
+     * Demonstrates TrueColor console support.
+     * @returns {void}
+     */
+    demoTrueColor() {
+        let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
+        const inc = 4;
+        for(let style of this.styles) {
+            for(let bgR = 0; bgR < 255; bgR += inc) {
+                for(let bgG = 0; bgG < 255; bgG += inc) {
+                    for(let bgB = 0; bgB < 255; bgB += inc) {
+                        for(let fgR = 0; fgR < 255; fgR += inc) {
+                            for(let fgG = 0; fgG < 255; fgG += inc) {
+                                for(let fgB = 0; fgB < 255; fgB += inc) {
+                                    let test = color._styleTruecolor(text, [fgR, fgG, fgB], [bgR, bgG, bgB], style);
+                                    console.log(test);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
 }
 
 // Exports
 module.exports = Pageant;
-
-
-
-
-//
-// const color = new Pageant({
-//     scheme: 256,
-//     isBrowser: false
-// });
-
-// for(let i in color.webColors) {
-//     let test = color.css(color.webColors[i], "background:black;color:"+color.webColors[i]);
-//     console.log(test);
-// }
-
-// for(let style of color.styles) {
-//     for(let bg in color.webColors) {
-//         for(let fg in color.webColors) {
-//             let test = color.style("hi there", color.webColors[fg], color.webColors[bg], style);
-//             console.log(test);
-//         }
-//     }
-// }
-
-// for(let style of color.styles) {
-//     for (let bgR = 0; bgR < 255; bgR+=8) {
-//         for (let bgG = 0; bgG < 255; bgG+=8) {
-//             for (let bgB = 0; bgB < 255; bgB+=8) {
-//                 for (let fgR = 0; fgR < 255; fgR+=8) {
-//                     for (let fgG = 0; fgG < 255; fgG+=8) {
-//                         for (let fgB = 0; fgB < 255; fgB+=8) {
-//                             let test = color.style("hi there", [fgR, fgG, fgB], [bgR, bgG, bgB], style);
-//                             console.log(test);
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
-
-
-
-
-// let test = color.style("hi there", "cyan", "red", "italic");
-// console.log(test);
-
-
-///////
-// Test overriding console
-// let console = new Pageant({
-//     scheme: 256,
-//     isBrowser: false
-// });
-// const testJSON = require("../scratch/ansiCols.json");
-// console.log(testJSON);
-// console.log("a string");
-// console.log(123);
-// console.log(true);

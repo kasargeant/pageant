@@ -1,10 +1,14 @@
 // Imports (unmocked)
 const Pageant = require("../../src/js/Pageant");
-const color = new Pageant();
+const color = new Pageant({
+    isBrowser: false,
+    scheme: "16"
+});
 
 // Constants
 const DUMMY_STRING = "Dummy String";
 
+describe("Class: Pageant (16-color ANSI mode)", function() {
 
 describe("Standard sanity check", function() {
     it("contains spec with an positive expectation", function() {
@@ -25,95 +29,96 @@ describe("Colorization functions", function() {
         expect(color.dim(DUMMY_STRING)).toBe(`\x1b[2m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as italic", function() {
+    it("should be able mark a string as italic", function () {
         expect(color.italic(DUMMY_STRING)).toBe(`\x1b[3m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as underscored", function() {
+    it("should be able mark a string as underscored", function () {
         expect(color.underline(DUMMY_STRING)).toBe(`\x1b[4m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as blinking", function() {
+    it("should be able mark a string as blinking", function () {
         expect(color.blink(DUMMY_STRING)).toBe(`\x1b[5m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as inversed", function() {
+    it("should be able mark a string as inversed", function () {
         expect(color.inverse(DUMMY_STRING)).toBe(`\x1b[7m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as hidden", function() {
+    it("should be able mark a string as hidden", function () {
         expect(color.hidden(DUMMY_STRING)).toBe(`\x1b[8m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as black", function() {
+    it("should be able mark a string as black", function () {
         expect(color.black(DUMMY_STRING)).toBe(`\x1b[30m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as red", function() {
+    it("should be able mark a string as red", function () {
         expect(color.red(DUMMY_STRING)).toBe(`\x1b[31m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as green", function() {
+    it("should be able mark a string as green", function () {
         expect(color.green(DUMMY_STRING)).toBe(`\x1b[32m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as yellow", function() {
+    it("should be able mark a string as yellow", function () {
         expect(color.yellow(DUMMY_STRING)).toBe(`\x1b[33m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as blue", function() {
+    it("should be able mark a string as blue", function () {
         expect(color.blue(DUMMY_STRING)).toBe(`\x1b[34m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as magenta", function() {
+    it("should be able mark a string as magenta", function () {
         expect(color.magenta(DUMMY_STRING)).toBe(`\x1b[35m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as cyan", function() {
+    it("should be able mark a string as cyan", function () {
         expect(color.cyan(DUMMY_STRING)).toBe(`\x1b[36m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as white", function() {
+    it("should be able mark a string as white", function () {
         expect(color.white(DUMMY_STRING)).toBe(`\x1b[37m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as black background", function() {
+    it("should be able mark a string as black background", function () {
         expect(color.blackBg(DUMMY_STRING)).toBe(`\x1b[40m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as red background", function() {
+    it("should be able mark a string as red background", function () {
         expect(color.redBg(DUMMY_STRING)).toBe(`\x1b[41m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as green background", function() {
+    it("should be able mark a string as green background", function () {
         expect(color.greenBg(DUMMY_STRING)).toBe(`\x1b[42m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as yellow background", function() {
+    it("should be able mark a string as yellow background", function () {
         expect(color.yellowBg(DUMMY_STRING)).toBe(`\x1b[43m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as blue background", function() {
+    it("should be able mark a string as blue background", function () {
         expect(color.blueBg(DUMMY_STRING)).toBe(`\x1b[44m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as magenta background", function() {
+    it("should be able mark a string as magenta background", function () {
         expect(color.magentaBg(DUMMY_STRING)).toBe(`\x1b[45m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as cyan background", function() {
+    it("should be able mark a string as cyan background", function () {
         expect(color.cyanBg(DUMMY_STRING)).toBe(`\x1b[46m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string as white background", function() {
+    it("should be able mark a string as white background", function () {
         expect(color.whiteBg(DUMMY_STRING)).toBe(`\x1b[47m${DUMMY_STRING}\x1b[0m`);
     });
 
-    it("should be able mark a string with overlapping characteristics", function() {
-        expect(color.multi(DUMMY_STRING, "blue", "yellow", "italic")).toBe(`\x1b[44m\x1b[33m\x1b[3m${DUMMY_STRING}\x1b[0m`);
+    it("should be able mark a string with overlapping characteristics", function () {
+        console.log(color.style(DUMMY_STRING, "blue", "yellow", "italic"));
+        expect(color.multi(DUMMY_STRING, "yellow", "blue", "italic")).toBe(`\x1b[3m\x1b[44m\x1b[33m${DUMMY_STRING}\x1b[0m`);
     });
 
-
+});
 
     //
     //

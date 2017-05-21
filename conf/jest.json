@@ -1,0 +1,5 @@
+{
+  "coverageDirectory": "../docs/coverage",
+  "setupTestFrameworkScriptFile": "../test/shared/MockStorage.js",
+  "testResultsProcessor": "../node_modules/jest-html-reporter"
+}
