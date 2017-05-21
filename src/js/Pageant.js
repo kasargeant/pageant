@@ -546,6 +546,25 @@ class Pageant {
             "gainsboro1": 7,
             "honeydew": 7,
         };
+
+
+
+        for(let idx = 0; idx < this.styles.length; idx++) {
+            let key = this.styles[idx];
+            this[key] = function(text) {return `\x1b[${idx}m${text}\x1b[0m`;};
+        }
+
+        for(let idx = 0; idx < this.webColors.length; idx++) {
+            let key = this.webColors[idx];
+            if(this.config.scheme === "16") {
+                let degrade = this.webAnsiLookup[key];
+                this[key] = function(text) {return `\x1b[${30 + degrade}m${text}\x1b[0m`;};
+                this[key+"Bg"] = function(text) {return `\x1b[${40 + degrade}m${text}\x1b[0m`;};
+            } else {
+                this[key] = function(text) {return `\x1b[38;5;${idx}m${text}\x1b[0m`;};
+                this[key+"Bg"] = function(text) {return `\x1b[48;5;${idx}m${text}\x1b[0m`;};
+            }
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -772,150 +791,6 @@ class Pageant {
         this.console.timeStamp(label);
     }
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // COLORATION
-    /**
-     * Marks the text string with a bright style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    bright(text) {return `\x1b[1m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a dim style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    dim(text) {return `\x1b[2m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with an italic style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    italic(text) {return `\x1b[3m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with an underlined style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    underline(text) {return `\x1b[4m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a blinking style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    blink(text) {return `\x1b[5m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a inversed style.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    inverse(text) {return `\x1b[7m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as hidden.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    hidden(text) {return `\x1b[8m${text}\x1b[0m`;}
-
-    /**
-     * Marks the text string as black.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    black(text) {return `\x1b[30m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as red.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    red(text) {return `\x1b[31m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as green.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    green(text) {return `\x1b[32m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as yellow.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    yellow(text) {return `\x1b[33m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as blue.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    blue(text) {return `\x1b[34m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as magenta.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    magenta(text) {return `\x1b[35m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as cyan.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    cyan(text) {return `\x1b[36m${text}\x1b[0m`;}
-    /**
-     * Marks the text string as white.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    white(text) {return `\x1b[37m${text}\x1b[0m`;}
-
-    /**
-     * Marks the text string with a black background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    blackBg(text) {return `\x1b[40m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a red background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    redBg(text) {return `\x1b[41m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a green background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    greenBg(text) {return `\x1b[42m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a yellow background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    yellowBg(text) {return `\x1b[43m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a blue background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    blueBg(text) {return `\x1b[44m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a magenta background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    magentaBg(text) {return `\x1b[45m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a cyan background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    cyanBg(text) {return `\x1b[46m${text}\x1b[0m`;}
-    /**
-     * Marks the text string with a white background.
-     * @param {string} text - the text string to be colorized.
-     * @returns {string} - the colorized text string.
-     */
-    whiteBg(text) {return `\x1b[47m${text}\x1b[0m`;}
-
     /**
      * Marks the text string with multiple CSS named color characteristics.
      * @param {string} text - the text string to be colorized.
@@ -1054,11 +929,11 @@ class Pageant {
      */
     style(text, color, colorBg, style) {
 
-        if(this.config.scheme === 16) {
+        if(this.config.scheme === "16") {
             return this._style16(text, color, colorBg, style);
-        } else if(this.config.scheme === 256) {
+        } else if(this.config.scheme === "256") {
             return this._style256(text, color, colorBg, style);
-        } else if(this.config.scheme === "full") {
+        } else if(this.config.scheme === "truecolor") {
             return this._styleTruecolor(text, color, colorBg, style);
         }
     }
