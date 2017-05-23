@@ -8,6 +8,6 @@ scratch/
 temp/
 
 # REPO FOLDERS NOT FOR NPM PUBLISHING
-/dist/
 /docs/
+/src/
 /test/
