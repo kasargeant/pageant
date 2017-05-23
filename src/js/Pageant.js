@@ -1088,8 +1088,7 @@ class Pageant {
      * @private
      */
     setEnv() {
-        console.info(process.env);
-
+        //console.info(process.env);
         //"darwin", "freebsd", "linux", "sunos", "win32"
 
         if(process.env.CLICOLOR === "1") {
@@ -1102,7 +1101,7 @@ class Pageant {
             case "xterm-16color": this.defaults.scheme =  "16"; break;
             case "xterm-256color": this.defaults.scheme =  "256"; break;
         }
-        console.log(`setEnv: Initially determine color scheme: ${this.defaults.scheme}`);
+        //console.log(`setEnv: Initially determine color scheme: ${this.defaults.scheme}`);
 
         switch(process.env.TERM_PROGRAM) {
             case "Apple_Terminal": break;
@@ -1111,12 +1110,12 @@ class Pageant {
                 // Programs like WS have no TERM_PROGRAM VALUE... assume 8/16-color only
                 this.defaults.scheme = "16";
         }
-        console.log(`setEnv: Finally determine color scheme: ${this.defaults.scheme}`);
+        //console.log(`setEnv: Finally determine color scheme: ${this.defaults.scheme}`);
 
         if(process.env.COLORFGBG !== undefined) {
             let [fg, bg] = process.env.COLORFGBG.split(";");
-            console.log(`setEnv: FG: ${fg}`);
-            console.log(`setEnv: BG: ${bg}`);
+            // console.log(`setEnv: FG: ${fg}`);
+            // console.log(`setEnv: BG: ${bg}`);
         }
 
     }
