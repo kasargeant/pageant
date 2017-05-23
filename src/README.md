@@ -140,7 +140,7 @@ Composing styles
 let composed = "I'm " + color.green("green") + " and " + color.red("red") + " together.";
 console.log(composed);
 
-let composed = `I'm ${color.green("blue")} and ${color.red("white")} together.";
+let composed = `I'm ${color.green("blue")} and ${color.red("white")} together.`;
 console.log(composed);
 ```
 

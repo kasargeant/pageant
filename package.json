@@ -1,6 +1,6 @@
 {
   "name": "pageant",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A pretty-printing console module extracted from Warhorse.",
   "keywords": [
     "javascript",
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "https://github.com/kasargeant/pageant.git"
   },
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "directories": {
     "doc": "docs",
     "test": "test"
@@ -40,5 +40,9 @@
     "pageTitle": "Test Results",
     "outputPath": "docs/tests/index.html",
     "includeFailureMsg": false
+  },
+  "dependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0"
   }
 }
