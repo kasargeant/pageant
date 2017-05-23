@@ -17,10 +17,11 @@ class Pageant {
      */
     constructor(options = {}) {
         this.defaults = {
-            scheme: 16,
+            scheme: "16",
             isBrowser: false,
             debug: false
         };
+        this.setEnv();
         this.config = Object.assign(this.defaults, options);
 
         this.console = (typeof(window) === "undefined") ? global.console : window.console;
@@ -608,7 +609,7 @@ class Pageant {
      * @returns {void}
      */
     log(value) {
-        this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this._styleValue(value));
+        this.console.log(value);
     }
 
     /**
@@ -616,7 +617,7 @@ class Pageant {
      * @param {*} value - Any JS or JSON value.
      * @returns {void}
      */
-    warning(value) {
+    warn(value) {
         this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this.yellow(value));
     }
 
@@ -1004,9 +1005,8 @@ class Pageant {
 
         keys.map(function(key) {
             let value = obj[key];
-            // representation += this.indent() + `"${key.blue}": ${this._stringifyValue(value)},\n`;
-            representation += this.indent() + this.yellow(`"${key}"`) + `: ${this._stringifyValue(value)},
-`;
+            // representation += this.indent() + this.yellow(`"${key}"`) + `: ${this._stringifyValue(value)},\n`;
+            representation += this.indent() + this.magenta(`"${key}"`) + `: ${this._stringifyValue(value)},\n`;
         }.bind(this));
         representation = representation.slice(0, -2); // Remove the trailing comma+space
 
@@ -1032,7 +1032,7 @@ class Pageant {
                 return this._stringifyFunction(value, "Pageant");
 
             case "boolean":
-                return this.magenta(value);
+                return this.yellow(value);
 
             case "number":
                 return this.blue(value);
@@ -1080,6 +1080,74 @@ class Pageant {
                 this.console.log(`Error: Unhandled type: '${type}' for value: ${value}`);
                 return;
         }
+    }
+
+    /**
+     * NOTE: This should be called BEFORE user options are merged with defaults.
+     * @returns {void}
+     * @private
+     */
+    setEnv() {
+        console.info(process.env);
+
+        //"darwin", "freebsd", "linux", "sunos", "win32"
+
+        if(process.env.CLICOLOR === "1") {
+            // No need to do anything
+        } else {console.warn("Warning: Environment variable CLICOLOR is missing or set to zero/no color.");}
+
+        switch(process.env.TERM) {
+            case "xterm": this.defaults.scheme =  "16"; break; // Really, just 8!
+            case "xterm-color": this.defaults.scheme =  "16"; break;
+            case "xterm-16color": this.defaults.scheme =  "16"; break;
+            case "xterm-256color": this.defaults.scheme =  "256"; break;
+        }
+        console.log(`setEnv: Initially determine color scheme: ${this.defaults.scheme}`);
+
+        switch(process.env.TERM_PROGRAM) {
+            case "Apple_Terminal": break;
+            case "iTerm.app": break;
+            default:
+                // Programs like WS have no TERM_PROGRAM VALUE... assume 8/16-color only
+                this.defaults.scheme = "16";
+        }
+        console.log(`setEnv: Finally determine color scheme: ${this.defaults.scheme}`);
+
+        if(process.env.COLORFGBG !== undefined) {
+            let [fg, bg] = process.env.COLORFGBG.split(";");
+            console.log(`setEnv: FG: ${fg}`);
+            console.log(`setEnv: BG: ${bg}`);
+        }
+
+    }
+
+    /**
+     * Demonstrates core console functionality - using whatever color scheme is defined.
+     * @returns {void}
+     */
+    demoConsole() {
+
+        let array = [1, true, "three"];
+        let object = {a: 1, b: true, c: "three", d: {msg: "hi!"}};
+
+        this.log("PAGEANT CONSOLE DEMO");
+        this.log();
+        this.log("Strings:-");
+        this.log("This is a standard console.log()");
+        this.warn("This is a standard console.warn()");
+        this.error("This is a standard console.error()");
+        this.info("This is a standard console.info()");
+        this.log("Arrays:-");
+        this.log(array);
+        this.warn(array);
+        this.error(array);
+        this.info(array);
+        this.log("Objects:-");
+        this.log(object);
+        this.warn(object);
+        this.error(object);
+        this.info(object);
+
     }
 
     /**
@@ -1138,10 +1206,6 @@ class Pageant {
             }
         }
     }
-
-
-
-
 }
 
 // Exports

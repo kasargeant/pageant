@@ -53,7 +53,7 @@ function tasks(warhorse) {
         warhorse.load()
             .bundle()
             .minifyJS()
-            .save("./dist/js/" + warhorse.file.name);
+            .save("./dist/" + warhorse.file.name);
     });
 
     warhorse.task("clean-dist", function() {
