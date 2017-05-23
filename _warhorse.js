@@ -51,7 +51,7 @@ function tasks(warhorse) {
 
     warhorse.task("build-js", function() {
         warhorse.load()
-            .bundle()
+            .bundle({standalone: "module.exports"})
             .minifyJS()
             .save("./dist/" + warhorse.file.name);
     });
