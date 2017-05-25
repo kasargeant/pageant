@@ -21,10 +21,13 @@ class Pageant {
             isBrowser: false,
             debug: false
         };
-        this.setEnv();
-        this.config = Object.assign(this.defaults, options);
+        this._setEnv(this.defaults);
 
-        this.console = (typeof(window) === "undefined") ? global.console : window.console;
+        this.config = Object.assign(this.defaults, options);
+// this.console.log(JSON.stringify(this.config));
+        if(!this.config.isBrowser) {
+            this._util = require("util");
+        }
 
         this.indentCount = 0;
 
@@ -504,7 +507,7 @@ class Pageant {
             "hotpink3": 1,
             "violet3": 5,
             "violet4": 5,
-            "orange": 1,
+            "orange": 3,
             "sandybrown1": 1,
             "lightsalmon": 1,
             "lightpink": 1,
@@ -559,6 +562,7 @@ class Pageant {
             let key = this.webColors[idx];
             if(this.config.scheme === "16") {
                 let degrade = this.webAnsiLookup[key];
+                //this.console.log(`color: ${key} = ${degrade}`);
                 this[key] = function(text) {return `\x1b[${30 + degrade}m${text}\x1b[0m`;};
                 this[key+"Bg"] = function(text) {return `\x1b[${40 + degrade}m${text}\x1b[0m`;};
             } else {
@@ -569,73 +573,67 @@ class Pageant {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Warhorse specific
-    cmd(value) {
-        this.config.isBrowser ? this.console.log(`%c${value}`, "background:magenta;") : this.console.log(this.magentaBg(value));
-    }
-
-    task(value) {
-        value = "  " + value;
-        this.config.isBrowser ? this.console.log(`%c${value}`, "background:blue;") : this.console.log(this.blueBg(value));
-    }
-
-    action(value) {
-        value = "  - " + value;
-        this.config.isBrowser ? this.console.log(`%c${value}`, "background:blue;") : this.console.log(this.blueBg(value));
-    }
-    stage(value) {
-        value = "    -> " + value;
-        this.config.isBrowser ? this.console.log(`%c${value}`, "color:cyan;") : this.console.log(this.cyan(value));
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Console methods: enhanced
 
     /**
      * Logs ONLY IF the console's debug configuration has been set.
      * Thus unlike the standard console.debug() which is merely an alias for console.log() - you can
      * switch on or off debug logging in Pageant by setting the options.debug flag at instantiation.
-     * @param {*} value - Any JS or JSON value.
+     * @param {*} args - Any JS or JSON values.
      * @returns {void}
      */
-    debug(value) {
+    debug(...args) {
         if(this.config.debug) {
-            this.log(value);
+            this.log(...args);
         }
     }
     /**
      * Outputs a log message to the enhanced console.
-     * @param {*} value - Any JS or JSON value.
+     * @param {*} head - Any JS or JSON value.
+     * @param {*} rest - Any other JS or JSON values.
      * @returns {void}
      */
-    log(value) {
-        this.console.log(value);
+    log(head, ...rest) {
+        this.console.log(head, ...rest);
     }
 
     /**
      * Outputs a warning message to the enhanced console.
-     * @param {*} value - Any JS or JSON value.
+     * @param {*} head - Any JS or JSON value.
+     * @param {*} rest - Any other JS or JSON values.
      * @returns {void}
      */
-    warn(value) {
-        this.config.isBrowser ? this.console.log(`%c${value}`, "color:orange;") : this.console.log(this.yellow(value));
+    warn(head, ...rest) {
+        if(this.config.isBrowser) {
+            this.console.log(`%c${head}`, "color:orange;", ...rest);
+        } else {
+            let temp = this._util.format(head, ...rest);
+            this.console.log(this.orange(temp));
+        }
     }
 
     /**
      * Outputs an error message to the enhanced console.
-     * @param {*} value - Any JS or JSON value.
+     * @param {*} head - Any JS or JSON value.
+     * @param {*} rest - Any other JS or JSON values.
      * @returns {void}
      */
-    error(value) {
-        this.config.isBrowser ? this.console.log(`%c${value}`, "color:red;") : this.console.log(this.red(value));
+    error(head, ...rest) {
+        if(this.config.isBrowser) {
+            this.console.error(`%c${head}`, "color:red;", ...rest);
+        } else {
+            let temp = this._util.format(head, ...rest);
+            this.console.error(this.red(temp));
+        }
     }
+
     /**
      * Outputs a exception message to the enhanced console (alias for console.error).
      * @param {*} value - Any JS or JSON value.
      * @returns {void}
      */
-    exception(value) {
-        this.error(value);
+    exception(...args) {
+        this.error(...args);
     }
 
     /**
@@ -643,18 +641,25 @@ class Pageant {
      * @param {*} value - Any JS or JSON value.
      * @returns {void}
      */
-    info(value) {
-        this.config.isBrowser ? console.info(value) : this.console.log(this._stringifyValue(value));
+    info(head, ...rest) {
+        if(this.config.isBrowser) {
+            console.info(head, ...rest);
+        } else {
+            this.console.log(this._stringifyValue(head));
+            for(let arg in rest) {
+                this.console.log(this._stringifyValue(arg));
+            }
+        }
     }
 
     /**
-     * Outputs an object to the enhanced console - using standard formatting.
-     * @param {*} value - Any JS or JSON value.
+     * Outputs a stringified and formatted object to the enhanced console.
+     * @param {*} object - An object.
      * @returns {void}
      */
-    stringify(value) {
+    stringify(object) {
         // this.console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
-        this.console.log(JSON.stringify(value, null, 2)); // stringify with 2 spaces at each level
+        this.console.log(JSON.stringify(object, null, 2)); // stringify with 2 spaces at each level
     }
 
     /**
@@ -668,7 +673,6 @@ class Pageant {
 
     /**
      * Same as standard console - exposed for compatibility only.
-     * @param {*} label - The label to be used.
      * @returns {void}
      */
     trace() {
@@ -1083,11 +1087,12 @@ class Pageant {
     }
 
     /**
-     * NOTE: This should be called BEFORE user options are merged with defaults.
-     * @returns {void}
+     * NOTE: This must be called BEFORE user options are merged with defaults.
+     * @param {Object} defaults - the defaults object.
+     * @returns {Object} - the modified defaults object.
      * @private
      */
-    setEnv() {
+    _setEnv(defaults) {
         //console.info(process.env);
         //"darwin", "freebsd", "linux", "sunos", "win32"
 
@@ -1117,6 +1122,14 @@ class Pageant {
             // console.log(`setEnv: FG: ${fg}`);
             // console.log(`setEnv: BG: ${bg}`);
         }
+
+        if(typeof(window) === "undefined") {
+            this.console = global.console;
+            defaults.isBrowser = false;
+        } else {
+            this.console = window.console;
+            defaults.isBrowser = true;
+        }
     }
 
     /**
@@ -1131,10 +1144,14 @@ class Pageant {
         this.log("PAGEANT CONSOLE DEMO");
         this.log();
         this.log("Strings:-");
-        this.log("This is a standard console.log()");
-        this.warn("This is a standard console.warn()");
-        this.error("This is a standard console.error()");
-        this.info("This is a standard console.info()");
+        this.log("This is a standard console.log().");
+        this.log("This is a standard console.log() %s %d %s.", "with", 3, "args");
+        this.warn("This is a standard console.warn().");
+        this.warn("This is a standard console.warn() %s %d %s.", "with", 3, "args");
+        this.error("This is a standard console.error().");
+        this.log("This is a standard console.error() %s %d %s.", "with", 3, "args");
+        this.info("This is a standard console.info().");
+        this.info("This is a standard console.info() %s %d %s.", "with", 3, "args");
         this.log("Arrays:-");
         this.log(array);
         this.warn(array);
