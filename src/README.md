@@ -56,23 +56,31 @@ Happy colorizing! ;)
 
 ## USAGE
 
-Pageant doesn't care what you use it for.  It has no dependencies other than an internal one to the system console.
+Pageant can be used as an enhanced console or as a string colorizer.  Or both.
 
-Thus, you can import, rename and reuse it - as you please.
+Pageant doesn't care what you use it for - or how you use it! 
+ 
+You can import it, rename it, override built-ins or use alongside them.
 
-### As a console drop-in...
+It has no dependencies other than an internal one to the system console and "plays nicely" with other code.
 
-Completely safe to use with existing code... just import and assign Pageant at the top of your script:-
+### As an enhanced console...
+
+Safe to use with existing code... just import and assign Pageant at the top of your script:-
                         
 ```javascript
     const Pageant = require("pageant");
-    const console = new Pageant({isBrowser: false});
+    const console = new Pageant();
 ```
 Then, just as you would normally:-
 
 ```javascript
 console.log("Hi there!!!");
-console.log(123);
+
+console.log("%s %s!!!", "hi", "there");
+
+console.log(123, 456);
+
 console.log({
     name: "Almost",
     middle: "A",
@@ -82,7 +90,7 @@ console.log({
 
 console.warn("Warning: Ooh 'eck, something's happenin'.");
 
-console.error("Error: Total, complete and absolute system failure and melt-down! Exit is advised.");
+console.error("Error: Total, complete and absolute system failure and melt-down! Exiting the building is advised.");
 ```    
 
 However, you will also find that the normal 'dumb' alias of console.debug()... isn't so dumb anymore!
@@ -91,32 +99,20 @@ However, you will also find that the normal 'dumb' alias of console.debug()... i
 console.debug("This message only shows if Pageant is in debug-mode.");
 ```
 
-Debug-mode and all other Pageant's other settings can be defined either at instantiation:-
-
-```javascript
-const console = new Pageant({debug: true});
-```    
-
-Or by the creation of a config file whose path is passed to Pageant:-
-
-```javascript
-const console = new Pageant({config: "./conf/pageant.json"});
-```    
+Debug-mode, as well as all of Pageant's other configuration settings can be defined at instantiation or in a separate config file.  For more info see Pageant's [Wiki:Configuration](https://github.com/kasargeant/pageant/wiki/Configuration) page.
+   
 
 ### As a string colorizer and styler...
 
-Pageant doesn't modify JavaScript's built-in string - or any other nastiness!  Instead, it colorizes text by inserting invisible unicode markers to tell the console how to color the text it's working with.
+Pageant doesn't modify JavaScript's built-in string - or any other such nastiness!  Instead, it colorizes text by inserting invisible unicode markers to tell the console how to display the text it's been given.
 
 So Pageant's colored strings - are simply ordinary JavaScript strings... and will do anything an ordinary JavaScript string will do.
 
-Ok to start coloring - first we importing and instantiating Pageant at the top of the script - and also tell it - how many colors our console supports:-
+So, to start coloring, all we need is to import Pageant and then instantiate it, with a convenient name:-
 
 ```javascript
 const Pageant = require("pageant");
-const color = new Pageant({
-    scheme: "256"
-    isBrowser: false
-});
+const color = new Pageant();
 ```                        
 
 Single style or color:-

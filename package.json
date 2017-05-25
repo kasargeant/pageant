@@ -29,17 +29,30 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "test": "jest --verbose"
+    "jest": "jest --verbose",
+    "jest-update": "jest --updateSnapshot"
   },
-  "devDependencies": {
-    "jest-cli": "^20.0.3",
-    "jest-html-reporter": "^0.1.0",
-    "minami": "^1.2.3"
+  "jest": {
+    "coverageDirectory": "./docs/coverage",
+    "coveragePathIgnorePatterns": [
+      "./conf/", "./dist/", "./src/",
+      "./test/data/", "./test/shared/"
+    ],
+    "setupTestFrameworkScriptFile": "./test/shared/MockStorage.js",
+    "testResultsProcessor": "./node_modules/jest-html-reporter",
+    "testPathIgnorePatterns": [
+      "./conf/", "./dist/", "./src/",
+      "./test/data/", "./test/shared/"
+    ]
   },
   "jest-html-reporter": {
     "pageTitle": "Test Results",
     "outputPath": "docs/tests/index.html",
     "includeFailureMsg": false
   },
-  "dependencies": {}
+  "devDependencies": {
+    "jest": "^20.0.4",
+    "jest-html-reporter": "^0.1.0",
+    "minami": "^1.2.3"
+  }
 }
