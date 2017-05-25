@@ -1,6 +1,6 @@
 {
   "name": "pageant",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A pretty-printing console module extracted from Warhorse.",
   "keywords": [
     "javascript",
@@ -35,14 +35,20 @@
   "jest": {
     "coverageDirectory": "./docs/coverage",
     "coveragePathIgnorePatterns": [
-      "./conf/", "./dist/", "./src/",
-      "./test/data/", "./test/shared/"
+      "./conf/",
+      "./dist/",
+      "./src/",
+      "./test/data/",
+      "./test/shared/"
     ],
     "setupTestFrameworkScriptFile": "./test/shared/MockStorage.js",
     "testResultsProcessor": "./node_modules/jest-html-reporter",
     "testPathIgnorePatterns": [
-      "./conf/", "./dist/", "./src/",
-      "./test/data/", "./test/shared/"
+      "./conf/",
+      "./dist/",
+      "./src/",
+      "./test/data/",
+      "./test/shared/"
     ]
   },
   "jest-html-reporter": {
