@@ -1,6 +1,6 @@
 {
   "name": "pageant",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A pretty-printing console module extracted from Warhorse.",
   "keywords": [
     "javascript",
