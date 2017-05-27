@@ -24,7 +24,8 @@ class Pageant {
         this._setEnv(this.defaults);
 
         this.config = Object.assign(this.defaults, options);
-// this.console.log(JSON.stringify(this.config));
+        // this.console.log(JSON.stringify(this.config));
+
         if(!this.config.isBrowser) {
             this._util = require("util");
         }
@@ -551,8 +552,7 @@ class Pageant {
             "honeydew": 7,
         };
 
-
-
+        /* jshint ignore:start */
         for(let idx = 0; idx < this.styles.length; idx++) {
             let key = this.styles[idx];
             this[key] = function(text) {return `\x1b[${idx}m${text}\x1b[0m`;};
@@ -564,12 +564,13 @@ class Pageant {
                 let degrade = this.webAnsiLookup[key];
                 //this.console.log(`color: ${key} = ${degrade}`);
                 this[key] = function(text) {return `\x1b[${30 + degrade}m${text}\x1b[0m`;};
-                this[key+"Bg"] = function(text) {return `\x1b[${40 + degrade}m${text}\x1b[0m`;};
+                this[key + "Bg"] = function(text) {return `\x1b[${40 + degrade}m${text}\x1b[0m`;};
             } else {
                 this[key] = function(text) {return `\x1b[38;5;${idx}m${text}\x1b[0m`;};
-                this[key+"Bg"] = function(text) {return `\x1b[48;5;${idx}m${text}\x1b[0m`;};
+                this[key + "Bg"] = function(text) {return `\x1b[48;5;${idx}m${text}\x1b[0m`;};
             }
         }
+        /* jshint ignore:end */
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -629,7 +630,7 @@ class Pageant {
 
     /**
      * Outputs a exception message to the enhanced console (alias for console.error).
-     * @param {*} value - Any JS or JSON value.
+     * @param {*} args - Any JS or JSON values.
      * @returns {void}
      */
     exception(...args) {
@@ -638,7 +639,8 @@ class Pageant {
 
     /**
      * Outputs an expanded listing of the value to the enhanced console.
-     * @param {*} value - Any JS or JSON value.
+     * @param {*} head - Any JS or JSON value.
+     * @param {*} rest - Any other JS or JSON values.
      * @returns {void}
      */
     info(head, ...rest) {
@@ -646,8 +648,8 @@ class Pageant {
             console.info(head, ...rest);
         } else {
             this.console.log(this._stringifyValue(head));
-            for(let arg in rest) {
-                this.console.log(this._stringifyValue(arg));
+            for(let i = 0; i < rest.length; i++) {
+                this.console.log(this._stringifyValue(rest[i]));
             }
         }
     }
@@ -693,7 +695,6 @@ class Pageant {
 
     /**
      * Same as standard console - exposed for compatibility only.
-     * @param {*} args - The arguments for assertion.
      * @returns {void}
      */
     clear() {
@@ -968,10 +969,10 @@ class Pageant {
         return "  ".repeat(this.indentCount);
     }
 
-    _stringifyFunction(obj, prop) {
+    _stringifyFunction(fn) {
         let placeholder = "____PLACEHOLDER____";
         let fns = [];
-        let json = JSON.stringify(obj, function(key, value) {
+        let json = JSON.stringify(fn, function(key, value) {
             if(typeof value === "function") {
                 fns.push(value);
                 return placeholder;
@@ -982,15 +983,14 @@ class Pageant {
             return fns.shift();
         });
         return json;
-    };
+    }
 
     _stringifyArray(values) {
         let representation = "[\n";
         this.indentCount++;
         if(values.length > 0) {
             values.map(function(value) {
-                representation += this.indent() + `${this._stringifyValue(value)},
-`;
+                representation += this.indent() + `${this._stringifyValue(value)},\n`;
             }.bind(this));
             representation = representation.slice(0, -2); // Remove the trailing comma+space
         }
@@ -1032,6 +1032,7 @@ class Pageant {
                 } else {
                     return this._stringifyObject(value);
                 }
+                break;
             case "function":
                 return this._stringifyFunction(value, "Pageant");
 
@@ -1065,6 +1066,7 @@ class Pageant {
                 } else {
                     return this._stringifyObject(value);
                 }
+                break;
             case "function":
                 return this._stringifyFunction(value, "Pageant");
 
@@ -1117,11 +1119,12 @@ class Pageant {
         }
         //console.log(`setEnv: Determined color scheme: ${this.defaults.scheme}`);
 
-        if(process.env.COLORFGBG !== undefined) {
-            let [fg, bg] = process.env.COLORFGBG.split(";");
-            // console.log(`setEnv: FG: ${fg}`);
-            // console.log(`setEnv: BG: ${bg}`);
-        }
+        // TODO - implement smart color selection if COLORFGBG is set.
+        // if(process.env.COLORFGBG !== undefined) {
+        //     let [fg, bg] = process.env.COLORFGBG.split(";");
+        //     console.log(`setEnv: FG: ${fg}`);
+        //     console.log(`setEnv: BG: ${bg}`);
+        // }
 
         if(typeof(window) === "undefined") {
             this.console = global.console;
@@ -1172,8 +1175,10 @@ class Pageant {
     demoAnsiColor() {
         let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
         for(let style of this.styles) {
-            for(let bg in this.colors) {
-                for(let fg in this.colors) {
+            for(let b = 0; b < this.colors.length; b++) {
+                let bg = this.colors[b];
+                for(let f = 0; f < this.colors.length; f++) {
+                    let fg = this.colors[f];
                     let test = this.multi(text, this.colors[fg], this.colors[bg], style);
                     console.log(test);
                 }
@@ -1188,8 +1193,10 @@ class Pageant {
     demoWebColor() {
         let text = `!"#$%&()*+'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~`;
         for(let style of this.styles) {
-            for(let bg in this.webColors) {
-                for(let fg in this.webColors) {
+            for(let b = 0; b < this.webColors.length; b++) {
+                let bg = this.webColors[b];
+                for(let f = 0; f < this.webColors.length; f++) {
+                    let fg = this.webColors[f];
                     let test = this._style256(text, this.webColors[fg], this.webColors[bg], style);
                     console.log(test);
                 }
@@ -1211,7 +1218,7 @@ class Pageant {
                         for(let fgR = 0; fgR < 255; fgR += inc) {
                             for(let fgG = 0; fgG < 255; fgG += inc) {
                                 for(let fgB = 0; fgB < 255; fgB += inc) {
-                                    let test = color._styleTruecolor(text, [fgR, fgG, fgB], [bgR, bgG, bgB], style);
+                                    let test = this._styleTruecolor(text, [fgR, fgG, fgB], [bgR, bgG, bgB], style);
                                     console.log(test);
                                 }
                             }
