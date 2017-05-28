@@ -20,12 +20,12 @@ function tasks(warhorse) {
         commands: {
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "build": function () {
+            "build": function() {
                 warhorse.use("build-js", "./src/index.js", {});
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "distribute": function () {
+            "distribute": function() {
                 warhorse
                     .execute("test")
                     .execute("lint")
@@ -34,28 +34,28 @@ function tasks(warhorse) {
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "clean": function () {
+            "clean": function() {
                 warhorse.execute("clean-dist");
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "document": function () {
+            "document": function() {
                 warhorse.use("document-js");
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "lint": function () {
+            "lint": function() {
                 warhorse.use("lint-js", "./src/js/*.js", {});
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "pack": function () {},
+            "pack": function() {},
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "precompile": function () {},
+            "precompile": function() {},
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "test": function () {
+            "test": function() {
                 warhorse.use("test-js", "./test/js/", {});
             }
         },
@@ -67,7 +67,7 @@ function tasks(warhorse) {
         tasks: {
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "build-js": function () {
+            "build-js": function() {
                 warhorse
                     .load()
                     .bundle({standalone: "module.exports"})
@@ -76,25 +76,25 @@ function tasks(warhorse) {
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "clean-dist": function () {
+            "clean-dist": function() {
                 warhorse
                     .clean(["./dist/*"]);
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "document-js": function () {
+            "document-js": function() {
                 warhorse.documentJS();
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "lint-js": function () {
+            "lint-js": function() {
                 warhorse
                     .load()
                     .lintJS();
             },
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "test-js": function () {
+            "test-js": function() {
                 warhorse
                     .testJS();
             }
