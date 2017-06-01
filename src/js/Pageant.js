@@ -453,23 +453,16 @@ class Pageant {
         this.log("This is a standard console.error() %s %d %s.", "with", 3, "args");
         this.info("This is a standard console.info().");
         this.info("This is a standard console.info() %s %d %s.", "with", 3, "args");
+        this.log();
         this.log("Arrays:-");
         this.log(array);
-        this.warn(array);
-        this.error(array);
         this.info(array);
+        this.log();
         this.log("Objects:-");
         this.log(object);
-        this.warn(object);
-        this.error(object);
         this.info(object);
     }
 }
 
 // Exports
 module.exports = Pageant;
-
-
-
-let console = new Pageant();
-console.demoConsole();
