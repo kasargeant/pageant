@@ -43,6 +43,6 @@
     "minami": "^1.2.3"
   },
   "dependencies": {
-    "tinter": "0.0.2"
+    "tinter": "0.0.3"
   }
 }
