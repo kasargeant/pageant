@@ -39,6 +39,7 @@
     "includeFailureMsg": false
   },
   "devDependencies": {
+    "coveralls": "^2.13.1",
     "jest": "^20.0.4",
     "jest-html-reporter": "^0.1.0",
     "minami": "^1.2.3"
