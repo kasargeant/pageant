@@ -9,7 +9,7 @@
   ],
   "author": "Kyle Alexis Sargeant",
   "email": "kasargeant@gmail.com",
-  "license": "GPL-3.0",
+  "license": "LGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/kasargeant/pageant.git"
@@ -29,8 +29,9 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "jest": "jest --verbose",
-    "jest-update": "jest --updateSnapshot"
+    "test": "jest --verbose",
+    "test-cover": "jest --coverage",
+    "test-update": "jest --updateSnapshot"
   },
   "jest-html-reporter": {
     "pageTitle": "Test Results",

@@ -106,7 +106,10 @@ console.debug("This message will no longer show in the production build.");
 
 Documentation about usage and configuration can be found in [Wiki:Configuration](https://github.com/kasargeant/pageant/wiki/Configuration) page.
 
-## LICENSE INFORMATION
- 
-Please see LICENSE.txt included in this distribution.
+## LICENSE
+
+Pageant was written by Kyle Alexis Sargeant and is shared under the LGPL-3.0 license.  
+        
+Thus, you can use it freely in anything - both open-source or commercial - without any need to disclose your own code.
+
  
