@@ -60,7 +60,7 @@ class Pageant {
      * @returns {void}
      */
     log(head, ...rest) {
-        this.console.log(head, ...rest);
+        this.console.log("\x1b[0m" + head, ...rest);    // FIXME - This 0m 'fix' shouldn't be required!!!
     }
 
     /**
@@ -443,21 +443,24 @@ class Pageant {
         let object = {a: 1, b: true, c: "three", d: {msg: "hi!"}};
 
         this.log("PAGEANT CONSOLE DEMO");
-        this.log();
+        this.log("\n");
         this.log("Strings:-");
         this.log("This is a standard console.log().");
         this.log("This is a standard console.log() %s %d %s.", "with", 3, "args");
         this.warn("This is a standard console.warn().");
         this.warn("This is a standard console.warn() %s %d %s.", "with", 3, "args");
         this.error("This is a standard console.error().");
-        this.log("This is a standard console.error() %s %d %s.", "with", 3, "args");
-        this.info("This is a standard console.info().");
-        this.info("This is a standard console.info() %s %d %s.", "with", 3, "args");
-        this.log();
+        this.error("This is a standard console.error() %s %d %s.", "with", 3, "args");
+
+        this.info("This is a string sent to console.info() and these are other types:-");
+        this.info(true);
+        this.info(12.345);
+        this.info(function(){return "some result";});
+        this.log("\n");
         this.log("Arrays:-");
         this.log(array);
         this.info(array);
-        this.log();
+        this.log("\n");
         this.log("Objects:-");
         this.log(object);
         this.info(object);
@@ -466,3 +469,7 @@ class Pageant {
 
 // Exports
 module.exports = Pageant;
+
+
+let pg = new Pageant();
+pg.demo();

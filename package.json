@@ -43,6 +43,7 @@
     "minami": "^1.2.3"
   },
   "dependencies": {
-    "tinter": "0.0.3"
+    "jest-html-reporter": "^0.1.2",
+    "tinter": "^0.4.5"
   }
 }
