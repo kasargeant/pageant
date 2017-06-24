@@ -8,6 +8,8 @@
 
 // Imports
 const Tinter = require("tinter");
+const Table = require("easy-table");
+const wrap = require("wordwrap");
 
 /**
  * @class
@@ -33,9 +35,17 @@ class Pageant {
             this._util = require("util");
         }
 
+        this.width = 0; // width in columns
+        this.height = 0; // height in rows
+
         this.indentCount = 0;
 
+        this.indentLeft = 0;
+        this.indentRight = 80;
+
         this.Color = Tinter;
+
+        process.stdout.on("resize", this._onResize);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,7 +70,13 @@ class Pageant {
      * @returns {void}
      */
     log(head, ...rest) {
-        this.console.log("\x1b[0m" + head, ...rest);    // FIXME - This 0m 'fix' shouldn't be required!!!
+        if(this.config.isBrowser) {
+            this.console.log(head, ...rest);
+        } else {
+            let text = this._util.format(head, ...rest);
+            text = wrap(this.indentLeft, this.indentRight)(text);
+            this.console.log(Tinter.default.defaultBg.plain(text));
+        }
     }
 
     /**
@@ -73,8 +89,9 @@ class Pageant {
         if(this.config.isBrowser) {
             this.console.log(`%c${head}`, "color:orange;", ...rest);
         } else {
-            let temp = this._util.format(head, ...rest);
-            this.console.log(Tinter.orange(temp));
+            let text = this._util.format(head, ...rest);
+            text = wrap(this.indentLeft, this.indentRight)(text);
+            this.console.log(Tinter.orange(text));
         }
     }
 
@@ -88,8 +105,9 @@ class Pageant {
         if(this.config.isBrowser) {
             this.console.error(`%c${head}`, "color:red;", ...rest);
         } else {
-            let temp = this._util.format(head, ...rest);
-            this.console.error(Tinter.red(temp));
+            let text = this._util.format(head, ...rest);
+            text = wrap(this.indentLeft, this.indentRight)(text);
+            this.console.error(Tinter.red(text));
         }
     }
 
@@ -125,8 +143,10 @@ class Pageant {
      * @returns {void}
      */
     stringify(object) {
-        // this.console.log(JSON.stringify(value, null, "\t")); // stringify with 2 spaces at each level
-        this.console.log(JSON.stringify(object, null, 2)); // stringify with 2 spaces at each level
+        let text = JSON.stringify(object, null, 2);
+        // let text = JSON.stringify(value, null, "\t");
+        text = wrap(this.indentLeft, this.indentRight)(text);
+        this.console.log(text); // stringify with 2 spaces at each level
     }
 
     /**
@@ -135,7 +155,9 @@ class Pageant {
      * @returns {void}
      */
     table(data) {
-        this.console.table(data);
+        let text = Table.print(data);
+        text = wrap(this.indentLeft, this.indentRight)(text);
+        this.console.log(text);
     }
 
     /**
@@ -260,6 +282,25 @@ class Pageant {
      */
     timeStamp(label) {
         this.console.timeStamp(label);
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    getSize() {
+        if(this.config.isBrowser === false && process.stdout.isTTY) {
+            this.width = process.stdout.columns;
+            this.height = process.stdout.rows;
+            return {width: this.width, height: this.height};
+        }
+        return {width: 0, height: 0};
+    }
+    setSize(width=80, height=24) {
+        console.log(`\u{1b}[8;${height};${width}t`);
+    }
+
+    _onResize() {
+        this.width = process.stdout.columns;
+        this.height = process.stdout.rows;
+        console.log(`${this.width}x${this.height}`);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -432,44 +473,7 @@ class Pageant {
             defaults.isBrowser = true;
         }
     }
-
-    /**
-     * Demonstrates core console functionality - using whatever color scheme is defined.
-     * @returns {void}
-     */
-    demo() {
-
-        let array = [1, true, "three"];
-        let object = {a: 1, b: true, c: "three", d: {msg: "hi!"}};
-
-        this.log("PAGEANT CONSOLE DEMO");
-        this.log("\n");
-        this.log("Strings:-");
-        this.log("This is a standard console.log().");
-        this.log("This is a standard console.log() %s %d %s.", "with", 3, "args");
-        this.warn("This is a standard console.warn().");
-        this.warn("This is a standard console.warn() %s %d %s.", "with", 3, "args");
-        this.error("This is a standard console.error().");
-        this.error("This is a standard console.error() %s %d %s.", "with", 3, "args");
-
-        this.info("This is a string sent to console.info() and these are other types:-");
-        this.info(true);
-        this.info(12.345);
-        this.info(function(){return "some result";});
-        this.log("\n");
-        this.log("Arrays:-");
-        this.log(array);
-        this.info(array);
-        this.log("\n");
-        this.log("Objects:-");
-        this.log(object);
-        this.info(object);
-    }
 }
 
 // Exports
 module.exports = Pageant;
-
-
-let pg = new Pageant();
-pg.demo();
