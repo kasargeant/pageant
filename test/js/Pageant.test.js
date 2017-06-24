@@ -14,7 +14,6 @@ const IS_TRAVIS = process.env.TRAVIS;
 
 // Imports
 const fs = require.requireActual("fs");
-const path = require.requireActual("path");
 const Pageant = require.requireActual("../../src/js/Pageant");
 
 // Helpers

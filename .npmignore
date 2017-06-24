@@ -9,6 +9,7 @@ scratch/
 temp/
 
 # REPO FOLDERS NOT FOR NPM PUBLISHING
+/conf/
+/coverage/
 /docs/
-/src/
 /test/
