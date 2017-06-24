@@ -1,6 +1,6 @@
 {
   "name": "pageant",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "description": "A pretty-printing console module extracted from Warhorse.",
   "keywords": [
     "javascript",
@@ -9,12 +9,12 @@
   ],
   "author": "Kyle Alexis Sargeant",
   "email": "kasargeant@gmail.com",
-  "license": "GPL-3.0",
+  "license": "LGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/kasargeant/pageant.git"
   },
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "directories": {
     "doc": "docs",
     "test": "test"
@@ -29,8 +29,9 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "jest": "jest --verbose",
-    "jest-update": "jest --updateSnapshot"
+    "test": "jest --verbose",
+    "test-cover": "jest --coverage",
+    "test-update": "jest --updateSnapshot"
   },
   "jest-html-reporter": {
     "pageTitle": "Test Results",
@@ -38,11 +39,15 @@
     "includeFailureMsg": false
   },
   "devDependencies": {
+    "coveralls": "^2.13.1",
     "jest": "^20.0.4",
     "jest-html-reporter": "^0.1.0",
     "minami": "^1.2.3"
   },
   "dependencies": {
-    "tinter": "0.0.3"
+    "easy-table": "^1.1.0",
+    "jest-html-reporter": "^0.1.2",
+    "tinter": "^0.4.5",
+    "wordwrap": "^1.0.0"
   }
 }

@@ -14,4 +14,9 @@ scratch/
 temp/
 
 # REPO FOLDERS NOT FOR GIT VERSIONING
+/coverage/
 /dist/
+/docs/api/
+/docs/coverage/
+/docs/tests/
+/docs/index.html

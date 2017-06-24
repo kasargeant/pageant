@@ -1,6 +1,6 @@
 /**
  * @file _warhorse.js
- * @description The Warhorse tasks default configuration.
+ * @description The Warhorse command configuration file (Pageant).
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -8,96 +8,87 @@
 
 // Warhorse task definitions
 function tasks(warhorse) {
-
     "use strict";
 
     return {
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // COMMANDS
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Commands are used to group together any arbitrary number of tasks.
-        commands: {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "build": function() {
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "build": function() {
-                warhorse.use("build-js", "./src/index.js", {});
-            },
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "distribute": function() {
-                warhorse
-                    .execute("test")
-                    .execute("lint")
-                    .execute("build")
-                    .execute("document");
-            },
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "clean": function() {
-                warhorse.execute("clean-dist");
-            },
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "document": function() {
-                warhorse.use("document-js");
-            },
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "lint": function() {
-                warhorse.use("lint-js", "./src/js/*.js", {});
-            },
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "pack": function() {},
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "precompile": function() {},
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "test": function() {
-                warhorse.use("test-js", "./test/js/", {});
-            }
+            warhorse.bundle("js", {
+                src: "./src/index.js",
+                dst: "./dist/index.js"
+            });
+            warhorse.minify("js", {
+                src: "./dist/index.js",
+                dst: "./dist/index.min.js"
+            });
         },
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TASKS
+        "distribute": function() {
+            warhorse
+                .execute("clean")
+                .execute("lint")
+                .execute("test")
+                .execute("build")
+                .execute("document");
+        },
+
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // Each task describes a single 'pipeline' of actions upon a single file.
-        tasks: {
+        "clean": function() {
+            warhorse.clean(["./dist/*"]);
+        },
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "build-js": function() {
-                warhorse
-                    .load()
-                    .bundle({standalone: "module.exports"})
-                    .minifyJS()
-                    .save("./dist/" + warhorse.file.name);
-            },
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "fix": function() {
+            warhorse.task("Fix JavaScript code style", "jscs", {
+                config: "./conf/jscs.json",
+                fix: ""
+            }, "./test/data/client_src/js/");
+        },
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "clean-dist": function() {
-                warhorse
-                    .clean(["./dist/*"]);
-            },
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "document": function() {
+            warhorse.document("js", {
+                conf: "conf/jsdoc.json",
+                src: "src/js/"
+            });
+        },
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "document-js": function() {
-                warhorse.documentJS();
-            },
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "lint": function() {
+            warhorse.lint("js", {
+                type: "quality",
+                conf: "conf/jshint.json",
+                src: "src/js/",
+                exclude: "conf/.jshintignore"
+            });
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "lint-js": function() {
-                warhorse
-                    .load()
-                    .lintJS();
-            },
+            warhorse.lint("js", {
+                type: "style",
+                conf: "conf/jscs.json",
+                src: "src/js/"
+            });
+        },
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            "test-js": function() {
-                warhorse
-                    .testJS();
-            }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "pack": function() {},
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "precompile": function() {},
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        "test": function() {
+            warhorse.test("js", {
+                tooling: "jest",
+                config: "conf/jest.json",
+                src: "./test/js/",
+                debug: true
+            });
         }
     };
 }
