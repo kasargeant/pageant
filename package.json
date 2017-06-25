@@ -47,7 +47,7 @@
   "dependencies": {
     "easy-table": "^1.1.0",
     "jest-html-reporter": "^0.1.2",
-    "tinter": "^0.4.5",
-    "wordwrap": "^1.0.0"
+    "linewrap": "^0.2.1",
+    "tinter": "^0.4.5"
   }
 }

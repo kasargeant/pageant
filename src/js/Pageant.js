@@ -9,7 +9,7 @@
 // Imports
 const Tinter = require("tinter");
 const Table = require("easy-table");
-const wrap = require("wordwrap");
+const wrap = require("linewrap");
 
 /**
  * @class
@@ -74,8 +74,8 @@ class Pageant {
             this.console.log(head, ...rest);
         } else {
             let text = this._util.format(head, ...rest);
-            text = wrap(this.indentLeft, this.indentRight)(text);
-            this.console.log(Tinter.default.defaultBg.plain(text));
+            text = wrap(this.indentLeft, this.indentRight, {skipScheme: "ansi-color"})(text);
+            this.console.log(text);
         }
     }
 
@@ -473,6 +473,27 @@ class Pageant {
             defaults.isBrowser = true;
         }
     }
+
+    h1(value) {
+        this.indentLeft = 0;
+        this.log(Tinter.style(value, "white", "navy", "italic"));
+    }
+
+    h2(value) {
+        this.indentLeft = 2;
+        this.log(Tinter.style(value, "orange", "navy", "italic"));
+    }
+
+    h3(value) {
+        this.indentLeft = 4;
+        this.log(Tinter.gray(value));
+    }
+    h4(value) {
+        this.indentLeft = 6;
+        this.log(Tinter.green(value));
+    }
+
+
 }
 
 // Exports
