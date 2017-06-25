@@ -29,9 +29,9 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "test": "jest --verbose",
-    "test-cover": "jest --coverage",
-    "test-update": "jest --updateSnapshot"
+    "test": "jest --config ./conf/jest.json",
+    "test-cover": "jest --config ./conf/jest.json --coverage",
+    "test-update": "jest --config ./conf/jest.json --updateSnapshot"
   },
   "jest-html-reporter": {
     "pageTitle": "Test Results",
