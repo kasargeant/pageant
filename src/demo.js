@@ -5,7 +5,7 @@
 
 // Imports
 const Pageant = require("./js/Pageant");
-const wrap = require("wordwrap");
+const wrap = require("linewrap");
 
 
 let console = new Pageant();
@@ -13,15 +13,18 @@ console.indentLeft = 5;
 let array = [1, true, "three"];
 let object = {a: 1, b: true, c: "three", d: {msg: "hi!"}};
 
-console.log("PAGEANT CONSOLE DEMO");
+console.h1("PAGEANT CONSOLE DEMO");
 console.log("\n");
 console.log("Strings:-");
 console.log("This is a standard console.log().");
 console.log("This is a standard console.log() %s %d %s.", "with", 3, "args");
+console.log("This is a very long string that's designed to show word-wrapping at some point along it's length.");
 console.warn("This is a standard console.warn().");
 console.warn("This is a standard console.warn() %s %d %s.", "with", 3, "args");
+console.warn("This is a very long string that's designed to show word-wrapping at some point along it's length.");
 console.error("This is a standard console.error().");
 console.error("This is a standard console.error() %s %d %s.", "with", 3, "args");
+console.error("This is a very long string that's designed to show word-wrapping at some point along it's length.");
 
 console.info("This is a string sent to console.info() and these are other types:-");
 console.info(true);
@@ -45,3 +48,16 @@ let arrayObj = [
     {id: 12, first: "Sally", second: "May", age: 28, active: false}
 ];
 console.table(arrayObj);
+
+console.h1("h1: This is some text.");
+console.h1("h1: This is a some text %s %d %s.", "with", 3, "args");
+console.h1("h1: This is a very long string that's designed to show word-wrapping at some point along it's length.");
+console.h2("h2: This is some text.");
+console.h2("h2: This is a some text %s %d %s.", "with", 3, "args");
+console.h2("h2: This is a very long string that's designed to show word-wrapping at some point along it's length.");
+console.h3("h3: This is some text.");
+console.h3("h3: This is a some text %s %d %s.", "with", 3, "args");
+console.h3("h3: This is a very long string that's designed to show word-wrapping at some point along it's length.");
+console.h4("h4: This is some text.");
+console.h4("h4: This is a some text %s %d %s.", "with", 3, "args");
+console.h4("h4: This is a very long string that's designed to show word-wrapping at some point along it's length.");

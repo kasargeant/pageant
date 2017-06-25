@@ -1,6 +1,6 @@
 {
   "name": "pageant",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A pretty-printing console module extracted from Warhorse.",
   "keywords": [
     "javascript",
@@ -29,9 +29,9 @@
     "npm": "~3.10.10"
   },
   "scripts": {
-    "test": "jest --verbose",
-    "test-cover": "jest --coverage",
-    "test-update": "jest --updateSnapshot"
+    "test": "jest --config ./conf/jest.json",
+    "test-cover": "jest --config ./conf/jest.json --coverage",
+    "test-update": "jest --config ./conf/jest.json --updateSnapshot"
   },
   "jest-html-reporter": {
     "pageTitle": "Test Results",
@@ -47,7 +47,7 @@
   "dependencies": {
     "easy-table": "^1.1.0",
     "jest-html-reporter": "^0.1.2",
-    "tinter": "^0.4.5",
-    "wordwrap": "^1.0.0"
+    "linewrap": "^0.2.1",
+    "tinter": "^0.4.5"
   }
 }

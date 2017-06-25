@@ -9,7 +9,7 @@
 // Imports
 const Tinter = require("tinter");
 const Table = require("easy-table");
-const wrap = require("wordwrap");
+const wrap = require("linewrap");
 
 /**
  * @class
@@ -72,10 +72,12 @@ class Pageant {
     log(head, ...rest) {
         if(this.config.isBrowser) {
             this.console.log(head, ...rest);
+            return "cabbage!";
         } else {
             let text = this._util.format(head, ...rest);
-            text = wrap(this.indentLeft, this.indentRight)(text);
-            this.console.log(Tinter.default.defaultBg.plain(text));
+            text = wrap(this.indentLeft, this.indentRight, {skipScheme: "ansi-color"})(text);
+            this.console.log(text);
+            return text;
         }
     }
 
@@ -91,7 +93,9 @@ class Pageant {
         } else {
             let text = this._util.format(head, ...rest);
             text = wrap(this.indentLeft, this.indentRight)(text);
-            this.console.log(Tinter.orange(text));
+            text = Tinter.orange(text);
+            this.console.log(text);
+            return text;
         }
     }
 
@@ -107,7 +111,9 @@ class Pageant {
         } else {
             let text = this._util.format(head, ...rest);
             text = wrap(this.indentLeft, this.indentRight)(text);
-            this.console.error(Tinter.red(text));
+            text = Tinter.red(text);
+            this.console.log(text);
+            return text;
         }
     }
 
@@ -124,16 +130,21 @@ class Pageant {
      * Outputs an expanded listing of the value to the enhanced console.
      * @param {*} head - Any JS or JSON value.
      * @param {*} rest - Any other JS or JSON values.
-     * @returns {void}
+     * @returns {*}
      */
     info(head, ...rest) {
         if(this.config.isBrowser) {
             console.info(head, ...rest);
+            return head;
         } else {
-            this.console.log(this._stringifyValue(head));
+            let text = this._stringifyValue(head);
+            this.console.log(text);
             for(let i = 0; i < rest.length; i++) {
-                this.console.log(this._stringifyValue(rest[i]));
+                let restText = this._stringifyValue(rest[i]);
+                this.console.log(restText);
+                text += "\n" + restText;
             }
+            return text;
         }
     }
 
@@ -147,6 +158,7 @@ class Pageant {
         // let text = JSON.stringify(value, null, "\t");
         text = wrap(this.indentLeft, this.indentRight)(text);
         this.console.log(text); // stringify with 2 spaces at each level
+        return text;
     }
 
     /**
@@ -158,6 +170,7 @@ class Pageant {
         let text = Table.print(data);
         text = wrap(this.indentLeft, this.indentRight)(text);
         this.console.log(text);
+        return text;
     }
 
     /**
@@ -465,14 +478,42 @@ class Pageant {
         //     console.log(`setEnv: BG: ${bg}`);
         // }
 
-        if(typeof(window) === "undefined") {
+        // Sniff what kind of host we have.
+        if(window === undefined) {
+            // Standard Node env.
+            this.console = global.console;
+            defaults.isBrowser = false;
+        } else if(window.describe !== undefined) {
+            // Test Node env. e.g. Jest
             this.console = global.console;
             defaults.isBrowser = false;
         } else {
+            // An actual browser
             this.console = window.console;
             defaults.isBrowser = true;
         }
     }
+
+    h1(value) {
+        this.indentLeft = 0;
+        return this.log(Tinter.style(value, "white", "navy", "italic"));
+    }
+
+    h2(value) {
+        this.indentLeft = 2;
+        return this.log(Tinter.style(value, "orange", "navy", "italic"));
+    }
+
+    h3(value) {
+        this.indentLeft = 4;
+        return this.log(Tinter.gray(value));
+    }
+    h4(value) {
+        this.indentLeft = 6;
+        return this.log(Tinter.green(value));
+    }
+
+
 }
 
 // Exports
