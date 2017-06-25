@@ -479,7 +479,7 @@ class Pageant {
         // }
 
         // Sniff what kind of host we have.
-        if(window === undefined) {
+        if(typeof window === "undefined") {
             // Standard Node env.
             this.console = global.console;
             defaults.isBrowser = false;
