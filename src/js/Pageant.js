@@ -24,6 +24,8 @@ class Pageant {
         this.defaults = {
             scheme: "16",
             isBrowser: false,
+            useFile: false,
+            logfile: "console.log",
             debug: false
         };
         this._setEnv(this.defaults);
@@ -32,6 +34,7 @@ class Pageant {
         // this.console.log(JSON.stringify(this.config));
 
         if(!this.config.isBrowser) {
+            this._fs = require("fs");
             this._util = require("util");
         }
 
@@ -49,7 +52,7 @@ class Pageant {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Console methods: enhanced
+    // Standard methods: enhanced
 
     /**
      * Logs ONLY IF the console's debug configuration has been set.
@@ -77,6 +80,7 @@ class Pageant {
             let text = this._util.format(head, ...rest);
             text = wrap(this.indentLeft, this.indentRight, {skipScheme: "ansi-color"})(text);
             this.console.log(text);
+            if(this.config.useFile) {this._writetoFile("LOG", text);}
             return text;
         }
     }
@@ -95,6 +99,7 @@ class Pageant {
             text = wrap(this.indentLeft, this.indentRight)(text);
             text = Tinter.orange(text);
             this.console.log(text);
+            if(this.config.useFile) {this._writetoFile("WARNING", text);}
             return text;
         }
     }
@@ -113,6 +118,7 @@ class Pageant {
             text = wrap(this.indentLeft, this.indentRight)(text);
             text = Tinter.red(text);
             this.console.log(text);
+            if(this.config.useFile) {this._writetoFile("ERROR", text);}
             return text;
         }
     }
@@ -135,6 +141,7 @@ class Pageant {
     info(head, ...rest) {
         if(this.config.isBrowser) {
             console.info(head, ...rest);
+            if(this.config.useFile) {this._writetoFile("info", head);}
             return head;
         } else {
             let text = this._stringifyValue(head);
@@ -144,6 +151,7 @@ class Pageant {
                 this.console.log(restText);
                 text += "\n" + restText;
             }
+            if(this.config.useFile) {this._writetoFile("INFO", text);}
             return text;
         }
     }
@@ -158,6 +166,7 @@ class Pageant {
         // let text = JSON.stringify(value, null, "\t");
         text = wrap(this.indentLeft, this.indentRight)(text);
         this.console.log(text); // stringify with 2 spaces at each level
+        if(this.config.useFile) {this._writetoFile("LOG", text);}   // NOTE: We pretend to be 'log' for this operation
         return text;
     }
 
@@ -182,7 +191,7 @@ class Pageant {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Console methods: compatibility
+    // Standard methods: pass-thru
 
     /**
      * Same as standard console - exposed for compatibility only.
@@ -295,6 +304,31 @@ class Pageant {
      */
     timeStamp(label) {
         this.console.timeStamp(label);
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Additional methods
+
+    /**
+     * Mainly for debug purposes - this exposes the underlying raw console log function itself.
+     * @param {*} args - Standard console.log arguments.
+     * @returns {void}
+     */
+    raw(...args) {
+        this.console.log(...args);
+    }
+
+    _writetoFile(type, message) {
+        if(this._fs !== undefined) {
+            let timestamp = new Date();
+            let logLine = `${timestamp} - ${type}: ${message}\n`;
+            this._fs.appendFile(this.config.logfile, logLine, (err) => {
+                if(err) {throw err;}
+                console.log('The "data to append" was appended to file!');
+            });
+        } else {
+            this.warn("Warning: Attempt at logging to disk in browser inevitably failed.");
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
