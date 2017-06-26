@@ -54,8 +54,7 @@ function tasks(warhorse) {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         "document": function() {
             warhorse.document("js", {
-                conf: "conf/jsdoc.json",
-                src: "src/js/"
+                conf: "conf/jsdoc.json"
             });
         },
 

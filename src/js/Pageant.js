@@ -18,13 +18,18 @@ const wrap = require("linewrap");
 class Pageant {
     /**
      * @constructor
-     * @param {Object} options - An options object for setting configurational details.
+     * @param {Object=} options - Options to override or extend Pageant's default configuration.
+     * @param {string} options.debug - Flag to enable debug reporting (Default: false).
+     * @param {string} options.isBrowser - Flag to force browser environment behaviour (Default: false).
+     * @param {string} options.logfile - A logfile name (Default: "./console.log").
+     * @param {string} options.useFile - Flag to switch on logging to file (Default: false).
      */
     constructor(options = {}) {
         this.defaults = {
-            scheme: "16",
+            debug: false,
             isBrowser: false,
-            debug: false
+            logfile: "console.log",
+            useFile: false
         };
         this._setEnv(this.defaults);
 
@@ -32,6 +37,7 @@ class Pageant {
         // this.console.log(JSON.stringify(this.config));
 
         if(!this.config.isBrowser) {
+            this._fs = require("fs");
             this._util = require("util");
         }
 
@@ -49,7 +55,7 @@ class Pageant {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Console methods: enhanced
+    // Standard methods: enhanced
 
     /**
      * Logs ONLY IF the console's debug configuration has been set.
@@ -77,6 +83,7 @@ class Pageant {
             let text = this._util.format(head, ...rest);
             text = wrap(this.indentLeft, this.indentRight, {skipScheme: "ansi-color"})(text);
             this.console.log(text);
+            if(this.config.useFile) {this._writetoFile("LOG", text);}
             return text;
         }
     }
@@ -95,6 +102,7 @@ class Pageant {
             text = wrap(this.indentLeft, this.indentRight)(text);
             text = Tinter.orange(text);
             this.console.log(text);
+            if(this.config.useFile) {this._writetoFile("WARNING", text);}
             return text;
         }
     }
@@ -113,6 +121,7 @@ class Pageant {
             text = wrap(this.indentLeft, this.indentRight)(text);
             text = Tinter.red(text);
             this.console.log(text);
+            if(this.config.useFile) {this._writetoFile("ERROR", text);}
             return text;
         }
     }
@@ -135,6 +144,7 @@ class Pageant {
     info(head, ...rest) {
         if(this.config.isBrowser) {
             console.info(head, ...rest);
+            if(this.config.useFile) {this._writetoFile("info", head);}
             return head;
         } else {
             let text = this._stringifyValue(head);
@@ -144,6 +154,7 @@ class Pageant {
                 this.console.log(restText);
                 text += "\n" + restText;
             }
+            if(this.config.useFile) {this._writetoFile("INFO", text);}
             return text;
         }
     }
@@ -158,31 +169,47 @@ class Pageant {
         // let text = JSON.stringify(value, null, "\t");
         text = wrap(this.indentLeft, this.indentRight)(text);
         this.console.log(text); // stringify with 2 spaces at each level
+        if(this.config.useFile) {this._writetoFile("LOG", text);}   // NOTE: We pretend to be 'log' for this operation
         return text;
     }
 
     /**
      * Same as standard console - exposed for compatibility only.
      * @param {Object|Array} data - The data to display.
-     * @returns {void}
+     * @returns {*}
      */
     table(data) {
-        let text = Table.print(data);
-        text = wrap(this.indentLeft, this.indentRight)(text);
-        this.console.log(text);
-        return text;
+        if(this.config.isBrowser) {
+            this.console.trace();
+        } else {
+            let text = Table.print(data);
+            text = wrap(this.indentLeft, this.indentRight)(text);
+            this.console.log(text);
+            if(this.config.useFile) {
+                this._writetoFile("TABLE", text);
+            }
+            return text;
+        }
     }
 
     /**
      * Same as standard console - exposed for compatibility only.
-     * @returns {void}
+     * @returns {*}
      */
     trace() {
-        this.console.trace();
+        if(this.config.isBrowser) {
+            this.console.trace();
+        } else {
+            let err = new Error();
+            let text = err.stack;
+            this.console.log(text); // stringify with 2 spaces at each level
+            if(this.config.useFile) {this._writetoFile("LOG", text);}   // NOTE: We pretend to be 'log' for this operation
+            return text;
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Console methods: compatibility
+    // Standard methods: pass-thru
 
     /**
      * Same as standard console - exposed for compatibility only.
@@ -295,6 +322,31 @@ class Pageant {
      */
     timeStamp(label) {
         this.console.timeStamp(label);
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Additional methods
+
+    /**
+     * Mainly for debug purposes - this exposes the underlying raw console log function itself.
+     * @param {*} args - Standard console.log arguments.
+     * @returns {void}
+     */
+    raw(...args) {
+        this.console.log(...args);
+    }
+
+    _writetoFile(type, message) {
+        if(this._fs !== undefined) {
+            let timestamp = new Date();
+            let logLine = `${timestamp} - ${type}: ${message}\n`;
+            this._fs.appendFile(this.config.logfile, logLine, (err) => {
+                if(err) {throw err;}
+                console.log('The "data to append" was appended to file!');
+            });
+        } else {
+            this.warn("Warning: Attempt at logging to disk in browser inevitably failed.");
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -449,34 +501,6 @@ class Pageant {
     _setEnv(defaults) {
         //console.info(process.env);
         //"darwin", "freebsd", "linux", "sunos", "win32"
-
-        // if(process.env.CLICOLOR === "1") {
-        //     // No need to do anything
-        // } else {console.warn("Warning: Environment variable CLICOLOR is missing or set to zero/no color.");}
-
-        switch(process.env.TERM) {
-            case "xterm": this.defaults.scheme =  "16"; break; // In theory, just 8!
-            case "xterm-color": this.defaults.scheme =  "16"; break;
-            case "xterm-16color": this.defaults.scheme =  "16"; break;
-            case "xterm-256color":
-                this.defaults.scheme =  "256";
-                switch(process.env.TERM_PROGRAM) {
-                    case "Apple_Terminal": break;
-                    case "iTerm.app": break;
-                    default:
-                        // Programs like WS have no TERM_PROGRAM VALUE... assume 8/16-color only
-                        this.defaults.scheme = "16";
-                }
-                break;
-        }
-        //console.log(`setEnv: Determined color scheme: ${this.defaults.scheme}`);
-
-        // TODO - implement smart color selection if COLORFGBG is set.
-        // if(process.env.COLORFGBG !== undefined) {
-        //     let [fg, bg] = process.env.COLORFGBG.split(";");
-        //     console.log(`setEnv: FG: ${fg}`);
-        //     console.log(`setEnv: BG: ${bg}`);
-        // }
 
         // Sniff what kind of host we have.
         if(typeof window === "undefined") {

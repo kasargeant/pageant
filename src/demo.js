@@ -48,7 +48,7 @@ let arrayObj = [
     {id: 12, first: "Sally", second: "May", age: 28, active: false}
 ];
 console.table(arrayObj);
-
+console.trace();
 console.h1("h1: This is some text.");
 console.h1("h1: This is a some text %s %d %s.", "with", 3, "args");
 console.h1("h1: This is a very long string that's designed to show word-wrapping at some point along it's length.");
