@@ -18,15 +18,18 @@ const wrap = require("linewrap");
 class Pageant {
     /**
      * @constructor
-     * @param {Object} options - An options object for setting configurational details.
+     * @param {Object=} options - Options to override or extend Pageant's default configuration.
+     * @param {string} options.debug - Flag to enable debug reporting (Default: false).
+     * @param {string} options.isBrowser - Flag to force browser environment behaviour (Default: false).
+     * @param {string} options.logfile - A logfile name (Default: "./console.log").
+     * @param {string} options.useFile - Flag to switch on logging to file (Default: false).
      */
     constructor(options = {}) {
         this.defaults = {
-            scheme: "16",
+            debug: false,
             isBrowser: false,
-            useFile: false,
             logfile: "console.log",
-            debug: false
+            useFile: false
         };
         this._setEnv(this.defaults);
 
@@ -498,34 +501,6 @@ class Pageant {
     _setEnv(defaults) {
         //console.info(process.env);
         //"darwin", "freebsd", "linux", "sunos", "win32"
-
-        // if(process.env.CLICOLOR === "1") {
-        //     // No need to do anything
-        // } else {console.warn("Warning: Environment variable CLICOLOR is missing or set to zero/no color.");}
-
-        switch(process.env.TERM) {
-            case "xterm": this.defaults.scheme =  "16"; break; // In theory, just 8!
-            case "xterm-color": this.defaults.scheme =  "16"; break;
-            case "xterm-16color": this.defaults.scheme =  "16"; break;
-            case "xterm-256color":
-                this.defaults.scheme =  "256";
-                switch(process.env.TERM_PROGRAM) {
-                    case "Apple_Terminal": break;
-                    case "iTerm.app": break;
-                    default:
-                        // Programs like WS have no TERM_PROGRAM VALUE... assume 8/16-color only
-                        this.defaults.scheme = "16";
-                }
-                break;
-        }
-        //console.log(`setEnv: Determined color scheme: ${this.defaults.scheme}`);
-
-        // TODO - implement smart color selection if COLORFGBG is set.
-        // if(process.env.COLORFGBG !== undefined) {
-        //     let [fg, bg] = process.env.COLORFGBG.split(";");
-        //     console.log(`setEnv: FG: ${fg}`);
-        //     console.log(`setEnv: BG: ${bg}`);
-        // }
 
         // Sniff what kind of host we have.
         if(typeof window === "undefined") {

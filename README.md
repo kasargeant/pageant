@@ -101,7 +101,9 @@ console.debug("This message will no longer show in the production build.");
 
 ## CONFIGURATION
 
-    TODO
+    TODO 
+    July 2017 - Currently Pageant Node functionality is being completed.
+    Browser support is still only partial at present.
 
 ## DOCUMENTATION
 
