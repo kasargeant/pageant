@@ -173,21 +173,36 @@ class Pageant {
     /**
      * Same as standard console - exposed for compatibility only.
      * @param {Object|Array} data - The data to display.
-     * @returns {void}
+     * @returns {*}
      */
     table(data) {
-        let text = Table.print(data);
-        text = wrap(this.indentLeft, this.indentRight)(text);
-        this.console.log(text);
-        return text;
+        if(this.config.isBrowser) {
+            this.console.trace();
+        } else {
+            let text = Table.print(data);
+            text = wrap(this.indentLeft, this.indentRight)(text);
+            this.console.log(text);
+            if(this.config.useFile) {
+                this._writetoFile("TABLE", text);
+            }
+            return text;
+        }
     }
 
     /**
      * Same as standard console - exposed for compatibility only.
-     * @returns {void}
+     * @returns {*}
      */
     trace() {
-        this.console.trace();
+        if(this.config.isBrowser) {
+            this.console.trace();
+        } else {
+            let err = new Error();
+            let text = err.stack;
+            this.console.log(text); // stringify with 2 spaces at each level
+            if(this.config.useFile) {this._writetoFile("LOG", text);}   // NOTE: We pretend to be 'log' for this operation
+            return text;
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
