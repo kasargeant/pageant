@@ -47,7 +47,7 @@ class Pageant {
         this.indentCount = 0;
 
         this.indentLeft = 0;
-        this.indentRight = 80;
+        this.indentRight = process.stdout.columns;
 
         this.Color = Tinter;
 
