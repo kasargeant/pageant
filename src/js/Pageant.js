@@ -47,7 +47,8 @@ class Pageant {
         this.indentCount = 0;
 
         this.indentLeft = 0;
-        this.indentRight = process.stdout.columns;
+        let consoleWidth = process.stdout.columns;
+        this.indentRight = (consoleWidth < 80) ? 80 : consoleWidth;
 
         this.Color = Tinter;
 
@@ -431,7 +432,9 @@ class Pageant {
                 return "";
 
             case "object":
-                if(value.constructor === Array) {
+                if(value === null) {
+                    return null;
+                } else if(value.constructor === Array) {
                     return this._stringifyArray(value);
                 } else {
                     return this._stringifyObject(value);
