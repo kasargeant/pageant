@@ -523,23 +523,24 @@ class Pageant {
 
     h0(value) {
         this.indentLeft = 0;
-        return this.log(Tinter.style(value, "white", "black", "inverse") + "\n");
+        return this.log("\n" + Tinter.style(value, "white", "black", "inverse"));
     }
 
     h1(value) {
         this.indentLeft = 0;
-        return this.log(Tinter.style(value, "white", "navy", "italic") + "\n");
+        return this.log("\n" + Tinter.style(value, "white", "navy", "italic"));
     }
 
     h2(value) {
         this.indentLeft = 2;
-        return this.log(Tinter.style(value, "orange", "navy", "italic") + "\n");
+        return this.log(Tinter.style(value, "orange", "navy", "italic"));
     }
 
     h3(value) {
         this.indentLeft = 4;
         return this.log(Tinter.gray(value));
     }
+
     h4(value) {
         this.indentLeft = 6;
         return this.log(Tinter.green(value));
