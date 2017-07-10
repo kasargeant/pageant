@@ -533,7 +533,7 @@ class Pageant {
 
     h2(value) {
         this.indentLeft = 2;
-        return this.log("\n" + Tinter.style(value, "orange", "navy", "italic"));
+        return this.log(Tinter.style(value, "orange", "navy", "italic"));
     }
 
     h3(value) {

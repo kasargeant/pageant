@@ -108,15 +108,15 @@ describe("Class: Pageant", function() {
 
         it("should correctly display output formatted with h0", function() {
             let output = console.h0("hi there");
-            expect(output).toBe("\u{1b}[7m\u{1b}[1m\u{1b}[40m\u{1b}[1m\u{1b}[97mhi there\u{1b}[0m\n");
+            expect(output).toBe("\n\u{1b}[7m\u{1b}[1m\u{1b}[40m\u{1b}[1m\u{1b}[97mhi there\u{1b}[0m");
         });
         it("should correctly display output formatted with h1", function() {
             let output = console.h1("hi there");
-            expect(output).toBe("\u{1b}[3m\u{1b}[1m\u{1b}[44m\u{1b}[1m\u{1b}[97mhi there\u{1b}[0m\n");
+            expect(output).toBe("\n\u{1b}[3m\u{1b}[1m\u{1b}[44m\u{1b}[1m\u{1b}[97mhi there\u{1b}[0m");
         });
         it("should correctly display output formatted with h2", function() {
             let output = console.h2("hi there");
-            expect(output).toBe("  \u{1b}[3m\u{1b}[1m\u{1b}[44m\u{1b}[1m\u{1b}[93mhi there\u{1b}[0m\n  ");
+            expect(output).toBe("  \u{1b}[3m\u{1b}[1m\u{1b}[44m\u{1b}[1m\u{1b}[93mhi there\u{1b}[0m");
         });
         it("should correctly display output formatted with h3", function() {
             let output = console.h3("hi there");
